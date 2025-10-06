@@ -12,7 +12,7 @@ import {
   CheckCircle,
   TrendingUp
 } from 'lucide-react'
-import { useAuth } from '../../context/AuthContext'
+import { useAuth } from '../../context/AuthContext.jsx'
 
 const Home = () => {
   const { user } = useAuth()

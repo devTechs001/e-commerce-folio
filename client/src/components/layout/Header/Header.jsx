@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Menu, X, User, LogOut, Bell, ChevronDown } from 'lucide-react'
-import { useAuth } from '../../context/AuthContext'
-import { useNotification } from '../../context/NotificationContext'
-import Button from '../common/Button/Button'
+import { useAuth } from '../../../context/AuthContext.jsx'
+import { useNotification } from '../../../context/NotificationContext'
+import Button from '../../common/Button/Button'
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)

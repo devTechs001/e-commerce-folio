@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Palette, Eye, Zap, CheckCircle } from 'lucide-react'
+import { Palette, Eye, Zap, CheckCircle, RefreshCw } from 'lucide-react'
 import Button from '../../common/Button/Button'
 
 const DesignOptimizer = () => {

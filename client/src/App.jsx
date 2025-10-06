@@ -11,19 +11,20 @@ import Home from './pages/Home/Home'
 import About from './pages/About/About'
 import Pricing from './pages/Pricing/Pricing'
 import Contact from './pages/Contact/Contact'
-import Login from './pages/Auth/Login'
-import Register from './pages/Auth/Register'
+import Login from './components/auth/Login/Login'
+import Register from './components/auth/Register/Register'
 import Dashboard from './components/dashboard/Dashboard'
 //import PortfolioBuilder from './pages/PortfolioBuilder/PortfolioBuilder'
 import TemplateMarketplace from './pages/TemplateMarketplace/TemplateMarketplace'
 import PortfolioView from './pages/PortfolioView/PortfolioView'
-import Analytics from './components/dashboard/analytics/Analytics'
+import PerformanceChart from './components/dashboard/analytics/PerformanceChart'
 import Settings from './components/dashboard/Settings'
 
 // Context
-import { useAuth } from './context/AuthContext'
+import { useAuth } from './context/AuthContext.jsx'
+import { ProtectedRoute, GuestRoute, RoleRoute } from './routes/guards.jsx'
 import { NotificationProvider } from './context/NotificationContext'
-import { PortfolioProvider } from './context/PortfolioContext'
+import { PortfolioProvider } from './context/PortfolioContext.jsx'
 
 function AppContent() {
   const { user, loading } = useAuth()
@@ -65,21 +66,25 @@ function AppContent() {
           <Route path="pricing" element={<Pricing />} />
           <Route path="contact" element={<Contact />} />
           <Route path="templates" element={<TemplateMarketplace />} />
-          <Route path="login" element={<Login />} />
-          <Route path="register" element={<Register />} />
+          <Route path="login" element={<GuestRoute><Login /></GuestRoute>} />
+          <Route path="register" element={<GuestRoute><Register /></GuestRoute>} />
         </Route>
 
         {/* Protected Dashboard Routes */}
         <Route 
           path="/dashboard" 
-          element={user ? <DashboardLayout /> : <Login />}
+          element={
+            <ProtectedRoute>
+              <DashboardLayout />
+            </ProtectedRoute>
+          }
         >
           <Route index element={<Dashboard />} />
-          <Route path="builder" element={<PortfolioBuilder />} />
-          <Route path="builder/:portfolioId" element={<PortfolioBuilder />} />
-          <Route path="analytics" element={<Analytics />} />
+          <Route path="analytics" element={<PerformanceChart />} />
           <Route path="settings" element={<Settings />} />
           <Route path="templates" element={<TemplateMarketplace />} />
+          <Route path="admin" element={<RoleRoute roles={["admin"]}><Dashboard /></RoleRoute>} />
+          <Route path="owner" element={<RoleRoute roles={["owner"]}><Dashboard /></RoleRoute>} />
         </Route>
 
         {/* Portfolio View Route (Public) */}

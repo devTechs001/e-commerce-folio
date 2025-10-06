@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Check, Star, Zap, Crown, HelpCircle } from 'lucide-react'
-import { useAuth } from '../../context/AuthContext'
+import { useAuth } from '../../context/AuthContext.jsx'
 import Button from '../../components/common/Button/Button'
 
 const Pricing = () => {

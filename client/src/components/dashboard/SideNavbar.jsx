@@ -7,22 +7,18 @@ import {
   Settings, 
   Palette,
   Users,
-  X
+  X,
+  Zap,
+  Globe,
+  CreditCard,
+  Bell,
+  HelpCircle
 } from 'lucide-react'
-import { useAuth } from '../../context/AuthContext'
+import { useAuth } from '../../context/AuthContext.jsx'
 
 const SideNavbar = ({ onClose }) => {
   const location = useLocation()
   const { user } = useAuth()
-
-  const navigation = [
-    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { name: 'Portfolio Builder', href: '/dashboard/builder', icon: FileText },
-    { name: 'Templates', href: '/dashboard/templates', icon: Palette },
-    { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
-    { name: 'Team', href: '/dashboard/team', icon: Users },
-    { name: 'Settings', href: '/dashboard/settings', icon: Settings },
-  ]
 
   const navigation = [
     {

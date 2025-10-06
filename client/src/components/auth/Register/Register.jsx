@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Mail, Lock, User, Eye, EyeOff, CheckCircle } from 'lucide-react'
-import { useAuth } from '../../../context/AuthContext'
+import { useAuth } from '../../../context/AuthContext.jsx'
 import Button from '../../common/Button/Button'
 import Input from '../../common/Form/Input'
 import { authService } from '../../../services/auth'

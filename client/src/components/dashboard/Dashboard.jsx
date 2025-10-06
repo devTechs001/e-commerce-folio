@@ -10,8 +10,8 @@ import {
   ArrowUp,
   ArrowDown
 } from 'lucide-react'
-import { useAuth } from '../../context/AuthContext'
-import { usePortfolio } from '../../context/PortfolioContext'
+import { useAuth } from '../../context/AuthContext.jsx'
+import { usePortfolio } from '../../context/PortfolioContext.jsx'
 import { analyticsService } from '../../services/analytics'
 import Button from '../common/Button/Button'
 

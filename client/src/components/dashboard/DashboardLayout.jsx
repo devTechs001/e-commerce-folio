@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Outlet } from 'react-router-dom'
-import Sidebar from '../layout/Sidebar/Sidebar'
-import TopNavbar from './TopNavbar/TopNavbar'
+import SideNavbar from './SideNavbar'
+import TopNavbar from './TopNavbar'
 
 const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true)
@@ -9,7 +9,7 @@ const DashboardLayout = () => {
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
-      <Sidebar isOpen={sidebarOpen} />
+      <SideNavbar onClose={() => setSidebarOpen(false)} />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">

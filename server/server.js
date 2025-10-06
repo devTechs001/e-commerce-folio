@@ -21,12 +21,22 @@ import { setupSocket } from './socket/index.js'
 
 dotenv.config()
 
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:5173", 
+  "http://localhost:5174",
+  "http://127.0.0.1:5173"
+]
+
 const app = express()
 const httpServer = createServer(app)
+
+//  FIXED: Proper CORS configuration
 const io = new Server(httpServer, {
   cors: {
-    origin: process.env.CLIENT_URL || "http://localhost:3000",
-    methods: ["GET", "POST"]
+    origin: allowedOrigins,  //  Use the array directly
+    methods: ["GET", "POST"],
+    credentials: true
   }
 })
 
@@ -39,8 +49,10 @@ app.use(limiter)
 
 // Security middleware
 app.use(helmet())
+
+//  FIXED: Proper CORS middleware
 app.use(cors({
-  origin: process.env.CLIENT_URL || "http://localhost:3000",
+  origin: allowedOrigins,  //  Use the array directly
   credentials: true
 }))
 
@@ -92,6 +104,7 @@ const startServer = async () => {
   httpServer.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
     console.log(`Environment: ${process.env.NODE_ENV || 'development'}`)
+    console.log(`Allowed CORS origins: ${allowedOrigins.join(', ')}`)
   })
 }
 

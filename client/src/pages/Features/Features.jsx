@@ -13,7 +13,7 @@ import {
   CheckCircle,
   ArrowRight
 } from 'lucide-react'
-import { useAuth } from '../../context/AuthContext'
+import { useAuth } from '../../context/AuthContext.jsx'
 import Button from '../../components/common/Button/Button'
 
 const Features = () => {

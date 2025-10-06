@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Menu, Bell, Search, User, Settings, LogOut } from 'lucide-react'
-import { useAuth } from '../../../context/AuthContext'
-import Button from '../../common/Button/Button'
+import { useAuth } from '../../context/AuthContext.jsx'
+import Button from '../common/Button/Button'
 
 const TopNavbar = ({ onMenuToggle, sidebarOpen }) => {
   const { user, logout } = useAuth()
