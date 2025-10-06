@@ -1,4 +1,304 @@
-
+e-folio/
+├── 📁 client/ (Frontend - React/Vite)
+│   ├── 📁 public/
+│   │   ├── icons/
+│   │   ├── images/
+│   │   ├── templates/
+│   │   └── manifest.json
+│   ├── 📁 src/
+│   │   ├── 📁 assets/
+│   │   │   ├── fonts/
+│   │   │   ├── icons/
+│   │   │   ├── images/
+│   │   │   └── templates/
+│   │   ├── 📁 components/
+│   │   │   ├── 📁 common/
+│   │   │   │   ├── Button/
+│   │   │   │   ├── Modal/
+│   │   │   │   ├── Loader/
+│   │   │   │   ├── Toast/
+│   │   │   │   ├── Form/
+│   │   │   │   └── Table/
+│   │   │   ├── 📁 layout/
+│   │   │   │   ├── Header/
+│   │   │   │   ├── Footer/
+│   │   │   │   ├── Sidebar/
+│   │   │   │   └── Navigation/
+│   │   │   ├── 📁 portfolio/
+│   │   │   │   ├── About/
+│   │   │   │   ├── Contact/
+│   │   │   │   ├── Education/
+│   │   │   │   ├── Experience/
+│   │   │   │   ├── Projects/
+│   │   │   │   ├── Skills/
+│   │   │   │   ├── Interests/
+│   │   │   │   └── Preview/
+│   │   │   ├── 📁 dashboard/
+│   │   │   │   ├── 📁 account/
+│   │   │   │   │   ├── Account.jsx
+│   │   │   │   │   ├── Finance.jsx
+│   │   │   │   │   └── Payments.jsx
+│   │   │   │   ├── 📁 analytics/
+│   │   │   │   │   ├── VisitorMap.jsx
+│   │   │   │   │   ├── PerformanceChart.jsx
+│   │   │   │   │   ├── SEOAnalyzer.jsx
+│   │   │   │   │   └── TrafficSources.jsx
+│   │   │   │   ├── 📁 ai/
+│   │   │   │   │   ├── AIInsights.jsx
+│   │   │   │   │   ├── ContentGenerator.jsx
+│   │   │   │   │   ├── DesignOptimizer.jsx
+│   │   │   │   │   └── SEOSuggestions.jsx
+│   │   │   │   ├── 📁 collaboration/
+│   │   │   │   │   ├── TeamManagement.jsx
+│   │   │   │   │   ├── RealTimeEditor.jsx
+│   │   │   │   │   ├── ShareModal.jsx
+│   │   │   │   │   └── VersionHistory.jsx
+│   │   │   │   ├── 📁 workspace/
+│   │   │   │   │   ├── ProjectManager.jsx
+│   │   │   │   │   ├── FileExplorer.jsx
+│   │   │   │   │   └── CodeEditor.jsx
+│   │   │   │   ├── Dashboard.jsx
+│   │   │   │   ├── DashboardLayout.jsx
+│   │   │   │   ├── TopNavbar.jsx
+│   │   │   │   ├── SideNavbar.jsx
+│   │   │   │   ├── Profile.jsx
+│   │   │   │   ├── Settings.jsx
+│   │   │   │   ├── Users.jsx
+│   │   │   │   ├── Visitors.jsx
+│   │   │   │   ├── Notification.jsx
+│   │   │   │   └── Themes.jsx
+│   │   │   ├── 📁 marketplace/
+│   │   │   │   ├── TemplateGallery.jsx
+│   │   │   │   ├── TemplatePreview.jsx
+│   │   │   │   ├── ReviewSystem.jsx
+│   │   │   │   ├── CategoryFilter.jsx
+│   │   │   │   ├── SearchFilters.jsx
+│   │   │   │   └── Favorites.jsx
+│   │   │   ├── 📁 auth/
+│   │   │   │   ├── Login/
+│   │   │   │   ├── Register/
+│   │   │   │   ├── ForgotPassword/
+│   │   │   │   └── OAuth/
+│   │   │   └── 📁 integrations/
+│   │   │       ├── SocialMedia/
+│   │   │       ├── JobBoards/
+│   │   │       ├── CRM/
+│   │   │       └── EmailMarketing/
+│   │   ├── 📁 pages/
+│   │   │   ├── Home/
+│   │   │   ├── About/
+│   │   │   ├── Pricing/
+│   │   │   ├── Contact/
+│   │   │   ├── Features/
+│   │   │   ├── Templates/
+│   │   │   ├── PortfolioView/
+│   │   │   └── Error/
+│   │   ├── 📁 create-user-template-folios/
+│   │   │   ├── 📁 payments/
+│   │   │   │   ├── Mpesa.jsx
+│   │   │   │   ├── Paypal.jsx
+│   │   │   │   ├── Stripe.jsx
+│   │   │   │   ├── MorePaymentOptions.jsx
+│   │   │   │   ├── SubscriptionManager.jsx
+│   │   │   │   ├── InvoiceGenerator.jsx
+│   │   │   │   └── AffiliateProgram.jsx
+│   │   │   ├── 📁 templates/
+│   │   │   │   ├── TemplateBuilder.jsx
+│   │   │   │   ├── TemplateCustomizer.jsx
+│   │   │   │   ├── StyleEditor.jsx
+│   │   │   │   ├── ComponentLibrary.jsx
+│   │   │   │   └── PreviewManager.jsx
+│   │   │   ├── Ai.jsx
+│   │   │   ├── Contact.jsx
+│   │   │   ├── Features.jsx
+│   │   │   ├── Help.jsx
+│   │   │   ├── Home.jsx
+│   │   │   ├── Login.jsx
+│   │   │   ├── Navbar.jsx
+│   │   │   ├── Pricing.jsx
+│   │   │   ├── Register.jsx
+│   │   │   ├── SplashScreen.jsx
+│   │   │   └── 📁 users-templates-store/
+│   │   ├── 📁 hooks/
+│   │   │   ├── useAuth.js
+│   │   │   ├── useApi.js
+│   │   │   ├── useLocalStorage.js
+│   │   │   ├── useDebounce.js
+│   │   │   ├── useSocket.js
+│   │   │   ├── useAnalytics.js
+│   │   │   ├── useAI.js
+│   │   │   └── useCollaboration.js
+│   │   ├── 📁 context/
+│   │   │   ├── AuthContext.js
+│   │   │   ├── ThemeContext.js
+│   │   │   ├── NotificationContext.js
+│   │   │   ├── PortfolioContext.js
+│   │   │   ├── CollaborationContext.js
+│   │   │   └── AIContext.js
+│   │   ├── 📁 services/
+│   │   │   ├── api.js
+│   │   │   ├── auth.js
+│   │   │   ├── portfolio.js
+│   │   │   ├── ai.js
+│   │   │   ├── analytics.js
+│   │   │   ├── collaboration.js
+│   │   │   ├── payment.js
+│   │   │   ├── storage.js
+│   │   │   └── socket.js
+│   │   ├── 📁 utils/
+│   │   │   ├── helpers.js
+│   │   │   ├── validators.js
+│   │   │   ├── constants.js
+│   │   │   ├── formatters.js
+│   │   │   ├── exporters.js
+│   │   │   └── seo.js
+│   │   ├── 📁 lib/
+│   │   │   ├── axios.js
+│   │   │   ├── socket.js
+│   │   │   ├── pusher.js
+│   │   │   └── analytics.js
+│   │   ├── 📁 styles/
+│   │   │   ├── globals.css
+│   │   │   ├── themes/
+│   │   │   ├── animations.css
+│   │   │   └── responsive.css
+│   │   ├── 📁 types/ (for TypeScript)
+│   │   │   ├── user.ts
+│   │   │   ├── portfolio.ts
+│   │   │   ├── template.ts
+│   │   │   └── api.ts
+│   │   ├── App.jsx
+│   │   ├── App.css
+│   │   ├── main.jsx
+│   │   └── index.css
+│   ├── package.json
+│   ├── vite.config.js
+│   ├── tailwind.config.js
+│   ├── postcss.config.js
+│   ├── eslint.config.js
+│   └── index.html
+├── 📁 server/ (Backend - Node.js/Express)
+│   ├── 📁 config/
+│   │   ├── database.js
+│   │   ├── cloudinary.js
+│   │   ├── stripe.js
+│   │   ├── socket.js
+│   │   ├── redis.js
+│   │   └── middleware.js
+│   ├── 📁 controllers/
+│   │   ├── authController.js
+│   │   ├── userController.js
+│   │   ├── portfolioController.js
+│   │   ├── templateController.js
+│   │   ├── aiController.js
+│   │   ├── analyticsController.js
+│   │   ├── collaborationController.js
+│   │   ├── paymentController.js
+│   │   ├── subscriptionController.js
+│   │   ├── exportController.js
+│   │   └── integrationController.js
+│   ├── 📁 models/
+│   │   ├── User.js
+│   │   ├── Portfolio.js
+│   │   ├── Template.js
+│   │   ├── Analytics.js
+│   │   ├── Collaboration.js
+│   │   ├── Subscription.js
+│   │   ├── Payment.js
+│   │   ├── Review.js
+│   │   ├── Integration.js
+│   │   └── Notification.js
+│   ├── 📁 routes/
+│   │   ├── auth.js
+│   │   ├── users.js
+│   │   ├── portfolios.js
+│   │   ├── templates.js
+│   │   ├── ai.js
+│   │   ├── analytics.js
+│   │   ├── collaboration.js
+│   │   ├── payments.js
+│   │   ├── subscriptions.js
+│   │   ├── exports.js
+│   │   └── integrations.js
+│   ├── 📁 middleware/
+│   │   ├── auth.js
+│   │   ├── validation.js
+│   │   ├── rateLimit.js
+│   │   ├── upload.js
+│   │   ├── cors.js
+│   │   └── errorHandler.js
+│   ├── 📁 services/
+│   │   ├── aiService.js
+│   │   ├── emailService.js
+│   │   ├── paymentService.js
+│   │   ├── storageService.js
+│   │   ├── analyticsService.js
+│   │   ├── collaborationService.js
+│   │   ├── exportService.js
+│   │   └── notificationService.js
+│   ├── 📁 utils/
+│   │   ├── helpers.js
+│   │   ├── validators.js
+│   │   ├── generators.js
+│   │   ├── exporters.js
+│   │   ├── aiHelpers.js
+│   │   └── security.js
+│   ├── 📁 socket/
+│   │   ├── collaboration.js
+│   │   ├── notifications.js
+│   │   └── index.js
+│   ├── 📁 jobs/ (Background jobs)
+│   │   ├── emailJobs.js
+│   │   ├── analyticsJobs.js
+│   │   ├── cleanupJobs.js
+│   │   └── aiProcessing.js
+│   ├── server.js
+│   ├── package.json
+│   └── .env
+├── 📁 shared/ (Shared between frontend and backend)
+│   ├── 📁 types/
+│   ├── 📁 constants/
+│   └── 📁 utils/
+├── 📁 docs/ (Documentation)
+│   ├── API.md
+│   ├── DEPLOYMENT.md
+│   ├── CONTRIBUTING.md
+│   └── FEATURES.md
+├── 📁 tests/
+│   ├── 📁 frontend/
+│   │   ├── unit/
+│   │   ├── integration/
+│   │   └── e2e/
+│   ├── 📁 backend/
+│   │   ├── unit/
+│   │   ├── integration/
+│   │   └── api/
+│   └── 📁 shared/
+├── 📁 scripts/
+│   ├── deploy.sh
+│   ├── backup.sh
+│   ├── setup.sh
+│   └── migration.js
+├── 📁 infrastructure/ (Docker & DevOps)
+│   ├── docker/
+│   │   ├── Dockerfile.client
+│   │   ├── Dockerfile.server
+│   │   ├── docker-compose.yml
+│   │   └── nginx/
+│   ├── ci-cd/
+│   │   ├── github-actions/
+│   │   └── Jenkinsfile
+│   └── monitoring/
+│       ├── prometheus.yml
+│       └── grafana-dashboard.json
+├── 📁 database/
+│   ├── migrations/
+│   ├── seeds/
+│   └── schema.sql
+├── .gitignore
+├── README.md
+├── package.json (Root - for monorepo)
+└── docker-compose.yml
   Starting with Core Files
 
  essential structure with the most important files:
