@@ -1,0 +1,97 @@
+services:
+  # Frontend (Client) Service
+  - type: web
+    name: ecommerce-folio-client
+    env: static
+    buildCommand: cd client && pnpm install && pnpm run build
+    staticPublishPath: client/dist
+    pullRequestPreviewsEnabled: true
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-XSS-Protection
+        value: 1; mode=block
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: NODE_VERSION
+        value: "18"
+      - key: PNPM_VERSION
+        value: "8"
+      - key: CI
+        value: "false"
+      - key: VITE_API_URL
+        value: https://ecommerce-folio-api.onrender.com
+      - key: VITE_APP_URL
+        value: https://ecommerce-folio-client.onrender.com
+
+  # Backend (Server) Service
+  - type: web
+    name: ecommerce-folio-api
+    env: node
+    plan: starter
+    buildCommand: cd server && npm install
+    startCommand: cd server && npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "10000"
+      - key: MONGODB_URI
+        fromDatabase:
+          name: ecommerce-folio-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: "7d"
+      - key: BCRYPT_SALT_ROUNDS
+        value: "12"
+      - key: CORS_ORIGIN
+        value: https://ecommerce-folio-client.onrender.com
+      - key: CLIENT_URL
+        value: https://ecommerce-folio-client.onrender.com
+      - key: API_URL
+        value: https://ecommerce-folio-api.onrender.com
+      # Email Configuration
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_SECURE
+        value: "false"
+      - key: SMTP_USER
+        sync: false # Set manually in Render dashboard
+      - key: SMTP_PASS
+        sync: false # Set manually in Render dashboard
+      # Stripe Configuration
+      - key: STRIPE_SECRET_KEY
+        sync: false # Set manually in Render dashboard
+      - key: STRIPE_PUBLISHABLE_KEY
+        sync: false # Set manually in Render dashboard
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false # Set manually in Render dashboard
+      # Cloudinary Configuration (for file uploads)
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false # Set manually in Render dashboard
+      - key: CLOUDINARY_API_KEY
+        sync: false # Set manually in Render dashboard
+      - key: CLOUDINARY_API_SECRET
+        sync: false # Set manually in Render dashboard
+
+databases:
+  - name: ecommerce-folio-db
+    databaseName: ecommerce_folio
+    user: ecommerce_user
+    plan: starter

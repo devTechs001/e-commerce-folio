@@ -7,7 +7,12 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:github": "vite build --base=/ecommerce-folio/",
+    "build:netlify": "vite build",
+    "build:render": "vite build",
+    "deploy:netlify": "netlify deploy --prod --dir=dist",
+    "deploy:preview": "netlify deploy --dir=dist"
   },
   "dependencies": {
     "@stripe/react-stripe-js": "^5.0.0",

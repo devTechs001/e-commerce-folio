@@ -1,0 +1,59 @@
+[build]
+  base = "client"
+  publish = "client/dist"
+  command = "pnpm install && pnpm run build"
+
+[build.environment]
+  NODE_VERSION = "18"
+  PNPM_VERSION = "8"
+  CI = "false"
+  VITE_API_URL = "https://ecommerce-folio-api.onrender.com"
+  VITE_APP_URL = "https://ecommerce-folio.netlify.app"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# API proxy for development
+[[redirects]]
+  from = "/api/*"
+  to = "https://ecommerce-folio-api.onrender.com/api/:splat"
+  status = 200
+  force = true
+
+# Environment-specific settings
+[context.production.environment]
+  VITE_NODE_ENV = "production"
+  VITE_API_URL = "https://ecommerce-folio-api.onrender.com"
+
+[context.deploy-preview.environment]
+  VITE_NODE_ENV = "staging"
+  VITE_API_URL = "https://ecommerce-folio-api-staging.onrender.com"
+
+[context.branch-deploy.environment]
+  VITE_NODE_ENV = "development"
+  VITE_API_URL = "https://ecommerce-folio-api-dev.onrender.com"

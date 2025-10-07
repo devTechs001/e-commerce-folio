@@ -4,7 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "seed": "node database/seed.js",
+    "seed:dev": "cross-env NODE_ENV=development node database/seed.js",
+    "seed:prod": "cross-env NODE_ENV=production node database/seed.js",
+    "check-deployment": "node scripts/check-deployment.js",
+    "deploy:github": "cd client && pnpm run build:github",
+    "deploy:netlify": "cd client && pnpm run build:netlify && pnpm run deploy:netlify",
+    "deploy:render": "echo 'Push to main branch for automatic Render deployment'",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down"
   },
   "keywords": [],
   "author": "devtechs001",

@@ -16,6 +16,7 @@ import freelancingRoutes from './routes/freelancing.js'
 import billingRoutes from './routes/billing.js'
 import paymentRoutes from './routes/payments.js'
 import passwordRoutes from './routes/password.js'
+import healthRoutes from './routes/health.js'
 
 // Import middleware
 import errorHandler from './middleware/errorHandler.js'
@@ -78,14 +79,8 @@ app.use('/api/billing', billingRoutes)
 app.use('/api/payments', paymentRoutes)
 app.use('/api/password', passwordRoutes)
 
-// Health check
-app.get('/api/health', (req, res) => {
-  res.status(200).json({ 
-    status: 'OK', 
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV 
-  })
-})
+// Health check routes
+app.use('/api', healthRoutes)
 
 // Error handling middleware
 app.use(errorHandler)

@@ -61,6 +61,9 @@ const Header = () => {
           { name: 'Messages', href: '/dashboard/messages', icon: <Zap className="h-4 w-4" /> },
           { name: 'Collaboration', href: '/dashboard/collaboration', icon: <Users className="h-4 w-4" /> },
           { name: 'Integrations', href: '/dashboard/integrations', icon: <Settings className="h-4 w-4" /> },
+          { name: 'Email Marketing', href: '/dashboard/marketing', icon: <Settings className="h-4 w-4" /> },
+          { name: 'Social Media', href: '/dashboard/social-media', icon: <Users className="h-4 w-4" /> },
+          { name: 'Portfolio Editor', href: '/dashboard/portfolio-editor', icon: <Palette className="h-4 w-4" /> },
           { name: 'Help & Support', href: '/help', icon: <Settings className="h-4 w-4" /> }
         ]
       }
@@ -354,6 +357,27 @@ const Header = () => {
                           Integrations
                         </Link>
                         <Link
+                          to="/dashboard/marketing"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                          onClick={() => setShowUserMenu(false)}
+                        >
+                          Email Marketing
+                        </Link>
+                        <Link
+                          to="/dashboard/social-media"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                          onClick={() => setShowUserMenu(false)}
+                        >
+                          Social Media
+                        </Link>
+                        <Link
+                          to="/dashboard/portfolio-editor"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                          onClick={() => setShowUserMenu(false)}
+                        >
+                          Portfolio Editor
+                        </Link>
+                        <Link
                           to="/dashboard/settings"
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                           onClick={() => setShowUserMenu(false)}
@@ -460,6 +484,27 @@ const Header = () => {
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Integrations
+                    </Link>
+                    <Link
+                      to="/dashboard/marketing"
+                      className="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Email Marketing
+                    </Link>
+                    <Link
+                      to="/dashboard/social-media"
+                      className="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Social Media
+                    </Link>
+                    <Link
+                      to="/dashboard/portfolio-editor"
+                      className="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Portfolio Editor
                     </Link>
                     <Link
                       to="/dashboard/freelancing"
