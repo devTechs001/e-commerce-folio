@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Mail, Lock, User, Eye, EyeOff, CheckCircle } from 'lucide-react'
+import { Mail, Lock, User } from 'lucide-react'
 import { useAuth } from '../../../context/AuthContext.jsx'
 import Button from '../../common/Button/Button'
 import Input from '../../common/Form/Input'
@@ -15,7 +15,6 @@ const Register = () => {
     confirmPassword: '',
     agreeToTerms: false
   })
-  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [passwordStrength, setPasswordStrength] = useState(0)
@@ -95,15 +94,18 @@ const Register = () => {
         password: formData.password
       })
 
-      if (response.success) {
+      // API returns { message, user, token }
+      if (response.token && response.user) {
         // Auto-login after registration
-        await login(response.data)
+        await login(response) // Pass the full response object
         navigate('/dashboard')
       } else {
         setError(response.message || 'Registration failed')
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'An error occurred during registration')
+      console.error('Registration error:', err)
+      const errorMsg = err.response?.data?.error || err.response?.data?.message || err.message || 'An error occurred during registration'
+      setError(errorMsg)
     } finally {
       setLoading(false)
     }
@@ -169,14 +171,12 @@ const Register = () => {
           <div>
             <Input
               label="Password"
-              type={showPassword ? 'text' : 'password'}
+              type="password"
               icon={Lock}
               value={formData.password}
               onChange={(e) => handleChange('password', e.target.value)}
               required
               autoComplete="new-password"
-              rightIcon={showPassword ? EyeOff : Eye}
-              onRightIconClick={() => setShowPassword(!showPassword)}
             />
             
             {/* Password Strength Meter */}
@@ -205,7 +205,7 @@ const Register = () => {
 
           <Input
             label="Confirm password"
-            type={showPassword ? 'text' : 'password'}
+            type="password"
             icon={Lock}
             value={formData.confirmPassword}
             onChange={(e) => handleChange('confirmPassword', e.target.value)}

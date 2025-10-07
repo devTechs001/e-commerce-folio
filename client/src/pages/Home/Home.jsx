@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { 
   ArrowRight, 
@@ -10,12 +10,81 @@ import {
   Code,
   Globe,
   CheckCircle,
-  TrendingUp
+  TrendingUp,
+  Activity,
+  Eye,
+  Download
 } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext.jsx'
+import { useSocket } from '../../hooks/useSocket.js'
+import { motion } from 'framer-motion'
 
 const Home = () => {
   const { user } = useAuth()
+  const [realTimeStats, setRealTimeStats] = useState({
+    portfoliosCreated: 10000,
+    templatesAvailable: 50,
+    activeUsers: 2543,
+    satisfaction: 98
+  })
+  const [recentActivity, setRecentActivity] = useState([])
+  const socket = useSocket(['analytics_updated', 'user_online', 'user_offline', 'portfolio_created'])
+
+  useEffect(() => {
+    // Simulate some initial activity only once
+    const activities = [
+      { type: 'template', message: 'Creative Portfolio template downloaded', time: new Date(Date.now() - 120000) },
+      { type: 'user', message: 'New user joined from San Francisco', time: new Date(Date.now() - 300000) },
+      { type: 'portfolio', message: 'Portfolio "Design Showcase" went live', time: new Date(Date.now() - 480000) }
+    ]
+    setRecentActivity(activities)
+  }, [])
+
+  useEffect(() => {
+    if (!socket) return
+
+    // Listen for real-time updates
+    const handleAnalyticsUpdate = (data) => {
+      setRealTimeStats(prev => ({ ...prev, ...data }))
+    }
+
+    const handlePortfolioCreated = (data) => {
+      setRecentActivity(prev => [
+        { type: 'portfolio', message: `New portfolio created: ${data.title}`, time: new Date() },
+        ...prev.slice(0, 4)
+      ])
+      setRealTimeStats(prev => ({ 
+        ...prev, 
+        portfoliosCreated: prev.portfoliosCreated + 1 
+      }))
+    }
+
+    const handleUserOnline = () => {
+      setRealTimeStats(prev => ({ 
+        ...prev, 
+        activeUsers: prev.activeUsers + 1 
+      }))
+    }
+
+    const handleUserOffline = () => {
+      setRealTimeStats(prev => ({ 
+        ...prev, 
+        activeUsers: Math.max(0, prev.activeUsers - 1) 
+      }))
+    }
+
+    socket.on('analytics_updated', handleAnalyticsUpdate)
+    socket.on('portfolio_created', handlePortfolioCreated)
+    socket.on('user_online', handleUserOnline)
+    socket.on('user_offline', handleUserOffline)
+
+    return () => {
+      socket.off('analytics_updated', handleAnalyticsUpdate)
+      socket.off('portfolio_created', handlePortfolioCreated)
+      socket.off('user_online', handleUserOnline)
+      socket.off('user_offline', handleUserOffline)
+    }
+  }, [socket.isConnected])
 
   const features = [
     {
@@ -72,10 +141,30 @@ const Home = () => {
   ]
 
   const stats = [
-    { number: '10,000+', label: 'Portfolios Created' },
-    { number: '50+', label: 'Professional Templates' },
-    { number: '98%', label: 'Customer Satisfaction' },
-    { number: '24/7', label: 'Support Available' }
+    { 
+      number: `${realTimeStats.portfoliosCreated.toLocaleString()}+`, 
+      label: 'Portfolios Created',
+      icon: <Globe className="h-5 w-5" />,
+      color: 'from-blue-500 to-cyan-500'
+    },
+    { 
+      number: `${realTimeStats.templatesAvailable}+`, 
+      label: 'Professional Templates',
+      icon: <Palette className="h-5 w-5" />,
+      color: 'from-purple-500 to-pink-500'
+    },
+    { 
+      number: `${realTimeStats.satisfaction}%`, 
+      label: 'Customer Satisfaction',
+      icon: <Star className="h-5 w-5" />,
+      color: 'from-yellow-500 to-orange-500'
+    },
+    { 
+      number: realTimeStats.activeUsers.toLocaleString(), 
+      label: 'Active Users',
+      icon: <Activity className="h-5 w-5" />,
+      color: 'from-green-500 to-emerald-500'
+    }
   ]
 
   return (
@@ -134,17 +223,79 @@ const Home = () => {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+      <section className="py-16 bg-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-50 to-gray-50"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+              Real-time Platform Statistics
+            </h2>
+            <div className="flex items-center justify-center space-x-2 text-sm text-gray-600">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span>Live data • Updated in real-time</span>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             {stats.map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+              <motion.div 
+                key={index} 
+                className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 group"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <div className={`inline-flex p-3 rounded-xl bg-gradient-to-r ${stat.color} text-white mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                  {stat.icon}
+                </div>
+                <div className="text-2xl md:text-3xl font-bold text-gray-900 mb-2 font-mono">
                   {stat.number}
                 </div>
-                <div className="text-gray-600 font-medium">{stat.label}</div>
-              </div>
+                <div className="text-gray-600 font-medium text-sm">{stat.label}</div>
+              </motion.div>
             ))}
+          </div>
+
+          {/* Real-time Activity Feed */}
+          <div className="mt-12 bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                <Activity className="h-5 w-5 mr-2 text-primary-600" />
+                Live Activity
+              </h3>
+              <div className="flex items-center space-x-2 text-sm text-gray-500">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span>Live</span>
+              </div>
+            </div>
+            <div className="space-y-3 max-h-32 overflow-y-auto">
+              {recentActivity.length > 0 ? (
+                recentActivity.map((activity, index) => (
+                  <motion.div 
+                    key={index}
+                    className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-2 h-2 rounded-full ${
+                        activity.type === 'portfolio' ? 'bg-blue-500' :
+                        activity.type === 'template' ? 'bg-purple-500' : 'bg-green-500'
+                      }`}></div>
+                      <span className="text-sm text-gray-700">{activity.message}</span>
+                    </div>
+                    <span className="text-xs text-gray-500">
+                      {Math.floor((Date.now() - activity.time) / 60000)}m ago
+                    </span>
+                  </motion.div>
+                ))
+              ) : (
+                <div className="text-center py-4 text-gray-500 text-sm">
+                  No recent activity
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </section>

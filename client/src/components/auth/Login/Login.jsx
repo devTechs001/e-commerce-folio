@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { Mail, Lock, Eye, EyeOff, Github, Twitter } from 'lucide-react'
+import { Mail, Lock, Github, Twitter } from 'lucide-react'
 import { useAuth } from '../../../context/AuthContext.jsx'
 import Button from '../../common/Button/Button'
 import Input from '../../common/Form/Input'
@@ -11,7 +11,6 @@ const Login = () => {
     email: '',
     password: ''
   })
-  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -37,14 +36,17 @@ const Login = () => {
     try {
       const response = await authService.login(formData)
       
-      if (response.success) {
-        await login(response.data)
+      // API returns { message, user, token }
+      if (response.token && response.user) {
+        await login(response) // Pass the full response object
         navigate(from, { replace: true })
       } else {
         setError(response.message || 'Login failed')
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'An error occurred during login')
+      console.error('Login error:', err)
+      const errorMsg = err.response?.data?.error || err.response?.data?.message || err.message || 'An error occurred during login'
+      setError(errorMsg)
     } finally {
       setLoading(false)
     }
@@ -60,8 +62,15 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-primary-50 to-blue-50 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary-200/20 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-200/20 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-primary-100/10 to-blue-100/10 rounded-full blur-3xl"></div>
+      </div>
+      
+      <div className="max-w-md w-full space-y-8 relative z-10">
         {/* Header */}
         <div className="text-center">
           <Link to="/" className="flex items-center justify-center space-x-2">
@@ -78,7 +87,7 @@ const Login = () => {
         </div>
 
         {/* Form */}
-        <form className="mt-8 space-y-6 bg-white p-8 rounded-lg border border-gray-200 shadow-sm" onSubmit={handleSubmit}>
+        <form className="mt-8 space-y-6 bg-white/80 backdrop-blur-sm p-8 rounded-2xl border border-white/20 shadow-2xl hover:shadow-3xl transition-all duration-300" onSubmit={handleSubmit}>
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-4">
               <p className="text-sm text-red-600">{error}</p>
@@ -98,14 +107,12 @@ const Login = () => {
 
             <Input
               label="Password"
-              type={showPassword ? 'text' : 'password'}
+              type="password"
               icon={Lock}
               value={formData.password}
               onChange={(e) => handleChange('password', e.target.value)}
               required
               autoComplete="current-password"
-              rightIcon={showPassword ? EyeOff : Eye}
-              onRightIconClick={() => setShowPassword(!showPassword)}
             />
           </div>
 

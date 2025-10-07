@@ -1,5 +1,25 @@
 import mongoose from 'mongoose'
 
+const sectionSchema = new mongoose.Schema({
+  id: String,
+  type: {
+    type: String,
+    enum: ['hero', 'about', 'projects', 'skills', 'contact', 'testimonials', 'services'],
+    required: true
+  },
+  title: String,
+  content: mongoose.Schema.Types.Mixed,
+  styles: {
+    backgroundColor: String,
+    textColor: String,
+    padding: String,
+    textAlign: String,
+    backgroundImage: String,
+    overlay: Number,
+    layout: String
+  }
+})
+
 const templateSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -14,23 +34,38 @@ const templateSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: ['minimal', 'creative', 'professional', 'modern', 'bold'],
+    enum: ['minimal', 'creative', 'professional', 'modern', 'bold', 'portfolio'],
     required: true
   },
   price: {
     type: Number,
-    required: true,
+    default: 0,
     min: [0, 'Price cannot be negative']
   },
   isPremium: {
     type: Boolean,
     default: false
   },
-  previewImage: {
-    type: String,
-    required: true
+  isPublic: {
+    type: Boolean,
+    default: true
   },
+  previewImage: String,
+  thumbnail: String,
   livePreviewUrl: String,
+  
+  // Template structure
+  sections: [sectionSchema],
+  globalStyles: {
+    primaryColor: { type: String, default: '#3B82F6' },
+    secondaryColor: { type: String, default: '#1F2937' },
+    fontFamily: { type: String, default: 'Inter' },
+    fontSize: { type: String, default: '16px' },
+    lineHeight: { type: String, default: '1.6' },
+    borderRadius: { type: String, default: '8px' },
+    spacing: { type: String, default: '1rem' }
+  },
+  
   features: [{
     name: String,
     included: Boolean
@@ -56,24 +91,46 @@ const templateSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  likes: {
+    type: Number,
+    default: 0
+  },
+  views: {
+    type: Number,
+    default: 0
+  },
   creator: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
   },
+  author: String, // Display name
   isActive: {
     type: Boolean,
     default: true
   },
-  tags: [String]
+  tags: [String],
+  
+  // Version control
+  version: {
+    type: String,
+    default: '1.0.0'
+  },
+  changelog: [{
+    version: String,
+    changes: [String],
+    date: { type: Date, default: Date.now }
+  }],
+  
+  // Usage stats
+  usageStats: {
+    totalUses: { type: Number, default: 0 },
+    activeUsers: { type: Number, default: 0 },
+    lastUsed: Date
+  }
 }, {
   timestamps: true
 })
-
-// Indexes
-templateSchema.index({ category: 1 })
-templateSchema.index({ price: 1 })
-templateSchema.index({ 'ratings.average': -1 })
 templateSchema.index({ downloads: -1 })
 templateSchema.index({ isActive: 1 })
 

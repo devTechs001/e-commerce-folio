@@ -20,9 +20,10 @@ const Footer = () => {
           <div className="col-span-1">
             <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider">Product</h3>
             <ul className="mt-4 space-y-2">
-              <li><Link to="/templates" className="text-gray-300 hover:text-white">Templates</Link></li>
-              <li><Link to="/pricing" className="text-gray-300 hover:text-white">Pricing</Link></li>
-              <li><Link to="/features" className="text-gray-300 hover:text-white">Features</Link></li>
+              <li><Link to="/templates" className="text-gray-300 hover:text-white transition-colors">Templates</Link></li>
+              <li><Link to="/pricing" className="text-gray-300 hover:text-white transition-colors">Pricing</Link></li>
+              <li><Link to="/dashboard/ai-generator" className="text-gray-300 hover:text-white transition-colors">AI Generator</Link></li>
+              <li><Link to="/dashboard/analytics-full" className="text-gray-300 hover:text-white transition-colors">Analytics</Link></li>
             </ul>
           </div>
 
@@ -30,26 +31,28 @@ const Footer = () => {
           <div className="col-span-1">
             <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider">Support</h3>
             <ul className="mt-4 space-y-2">
-              <li><Link to="/help" className="text-gray-300 hover:text-white">Help Center</Link></li>
-              <li><Link to="/contact" className="text-gray-300 hover:text-white">Contact</Link></li>
-              <li><Link to="/docs" className="text-gray-300 hover:text-white">Documentation</Link></li>
+              <li><Link to="/help" className="text-gray-300 hover:text-white transition-colors">Help Center</Link></li>
+              <li><Link to="/contact" className="text-gray-300 hover:text-white transition-colors">Contact</Link></li>
+              <li><Link to="/dashboard/freelancing" className="text-gray-300 hover:text-white transition-colors">Freelancing</Link></li>
+              <li><Link to="/about" className="text-gray-300 hover:text-white transition-colors">About Us</Link></li>
             </ul>
           </div>
 
-          {/* Legal */}
+          {/* Resources */}
           <div className="col-span-1">
-            <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider">Legal</h3>
+            <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider">Resources</h3>
             <ul className="mt-4 space-y-2">
-              <li><Link to="/privacy" className="text-gray-300 hover:text-white">Privacy Policy</Link></li>
-              <li><Link to="/terms" className="text-gray-300 hover:text-white">Terms of Service</Link></li>
-              <li><Link to="/cookies" className="text-gray-300 hover:text-white">Cookie Policy</Link></li>
+              <li><Link to="/revenue" className="text-gray-300 hover:text-white transition-colors">Revenue Dashboard</Link></li>
+              <li><Link to="/dashboard/collaboration" className="text-gray-300 hover:text-white transition-colors">Collaboration</Link></li>
+              <li><Link to="/dashboard/templates" className="text-gray-300 hover:text-white transition-colors">Template Gallery</Link></li>
+              <li><Link to="/dashboard/messages" className="text-gray-300 hover:text-white transition-colors">Messages</Link></li>
             </ul>
           </div>
         </div>
 
         <div className="mt-8 pt-8 border-t border-gray-700 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-300 text-sm">
-            &copy; 2024 E-Folio. All rights reserved.
+            &copy; 2025 E-Folio by devTechs001. All rights reserved.
           </p>
           <div className="mt-4 md:mt-0 flex space-x-6">
             <a href="#" className="text-gray-300 hover:text-white">

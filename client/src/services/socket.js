@@ -12,11 +12,17 @@ class SocketService {
       this.disconnect()
     }
 
-    this.socket = io(import.meta.env.VITE_API_URL, {
+    this.socket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000', {
       auth: {
         token
       },
-      transports: ['websocket', 'polling']
+      transports: ['websocket', 'polling'],
+      forceNew: true,
+      reconnection: true,
+      timeout: 20000,
+      reconnectionDelay: 1000,
+      reconnectionAttempts: 5,
+      maxReconnectionAttempts: 5
     })
 
     this.setupEventListeners()
@@ -69,7 +75,6 @@ class SocketService {
     this.socket.on('comment_resolved', (data) => {
       this.triggerEvent('comment_resolved', data)
     })
-
     // Real-time analytics
     this.socket.on('visitor_update', (data) => {
       this.triggerEvent('visitor_update', data)
@@ -78,6 +83,49 @@ class SocketService {
     // Notification events
     this.socket.on('notification', (data) => {
       this.triggerEvent('notification', data)
+    })
+
+    // Freelancing events
+    this.socket.on('job_posted', (data) => {
+      this.triggerEvent('job_posted', data)
+    })
+
+    this.socket.on('job_updated', (data) => {
+      this.triggerEvent('job_updated', data)
+    })
+
+    this.socket.on('job_deleted', (data) => {
+      this.triggerEvent('job_deleted', data)
+    })
+
+    this.socket.on('new_proposal', (data) => {
+      this.triggerEvent('new_proposal', data)
+    })
+
+    // Messaging events
+    this.socket.on('private_message', (data) => {
+      this.triggerEvent('private_message', data)
+    })
+
+    this.socket.on('user_typing', (data) => {
+      this.triggerEvent('user_typing', data)
+    })
+
+    this.socket.on('user_online', (data) => {
+      this.triggerEvent('user_online', data)
+    })
+
+    this.socket.on('user_offline', (data) => {
+      this.triggerEvent('user_offline', data)
+    })
+
+    // Analytics events
+    this.socket.on('analytics_updated', (data) => {
+      this.triggerEvent('analytics_updated', data)
+    })
+
+    this.socket.on('visitor_tracked', (data) => {
+      this.triggerEvent('visitor_tracked', data)
     })
   }
 

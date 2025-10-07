@@ -15,15 +15,24 @@ const ForgotPassword = () => {
     setError('')
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      
-      // In a real app, you would call your password reset API here
-      // await authService.forgotPassword(email)
-      
-      setSuccess(true)
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/password/forgot`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setSuccess(true)
+      } else {
+        setError(data.error || 'Failed to send reset email. Please try again.')
+      }
     } catch (err) {
-      setError('Failed to send reset email. Please try again.',err)
+      console.error('Forgot password error:', err)
+      setError('Failed to send reset email. Please try again.')
     } finally {
       setLoading(false)
     }

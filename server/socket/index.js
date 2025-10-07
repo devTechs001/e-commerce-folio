@@ -1,6 +1,7 @@
 import { Server } from 'socket.io'
 import jwt from 'jsonwebtoken'
 import User from '../models/User.js'
+import { socketService } from './socketService.js'
 
 export const setupSocket = (io) => {
   // Authentication middleware for socket
@@ -28,6 +29,9 @@ export const setupSocket = (io) => {
 
   io.on('connection', (socket) => {
     console.log(`User ${socket.user.profile.firstName} connected`)
+    
+    // Add user to socket service
+    socketService.addUser(socket.id, socket.userId)
 
     // Join portfolio room for real-time collaboration
     socket.on('join-portfolio', (portfolioId) => {
@@ -68,9 +72,33 @@ export const setupSocket = (io) => {
       })
     })
 
+    // Handle private messaging
+    socket.on('private_message', (data) => {
+      socket.to(data.receiverId).emit('private_message', {
+        ...data,
+        senderId: socket.userId,
+        senderName: `${socket.user.profile.firstName} ${socket.user.profile.lastName}`,
+        timestamp: new Date()
+      })
+    })
+
+    // Handle typing indicators
+    socket.on('typing', (data) => {
+      socket.to(data.conversationId).emit('user_typing', {
+        userId: socket.userId,
+        isTyping: data.isTyping
+      })
+    })
+
+    // Handle job notifications
+    socket.on('job_posted', (data) => {
+      socketService.broadcast('job_posted', data)
+    })
+
     // Handle disconnection
     socket.on('disconnect', () => {
       console.log(`User ${socket.userId} disconnected`)
+      socketService.removeUser(socket.id)
     })
   })
 }

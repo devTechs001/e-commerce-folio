@@ -196,6 +196,64 @@ const Dashboard = () => {
         />
       </div>
 
+      {/* Analytics Quick Access */}
+      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900">Analytics & Insights</h2>
+            <p className="text-gray-600">Track your portfolio performance and revenue</p>
+          </div>
+          <div className="flex space-x-3">
+            <Link
+              to="/dashboard/analytics-full"
+              className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <TrendingUp className="h-4 w-4" />
+              <span>Full Analytics</span>
+            </Link>
+            <Link
+              to="/dashboard/revenue"
+              className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+            >
+              <TrendingUp className="h-4 w-4" />
+              <span>Revenue Dashboard</span>
+            </Link>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-blue-800">Page Views</p>
+                <p className="text-2xl font-bold text-blue-900">{stats.totalViews.toLocaleString()}</p>
+              </div>
+              <Eye className="h-8 w-8 text-blue-600" />
+            </div>
+          </div>
+          
+          <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-green-800">Revenue</p>
+                <p className="text-2xl font-bold text-green-900">$2,450</p>
+              </div>
+              <TrendingUp className="h-8 w-8 text-green-600" />
+            </div>
+          </div>
+          
+          <div className="bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-purple-800">Visitors</p>
+                <p className="text-2xl font-bold text-purple-900">1,234</p>
+              </div>
+              <Users className="h-8 w-8 text-purple-600" />
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="grid lg:grid-cols-2 gap-8">
         {/* Recent Portfolios */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100">

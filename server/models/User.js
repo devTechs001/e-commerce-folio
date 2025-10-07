@@ -21,6 +21,11 @@ const userSchema = new mongoose.Schema({
     minlength: [6, 'Password must be at least 6 characters'],
     select: false
   },
+  role: {
+    type: String,
+    enum: ['user', 'admin', 'owner'],
+    default: 'user'
+  },
   profile: {
     firstName: {
       type: String,
@@ -45,7 +50,57 @@ const userSchema = new mongoose.Schema({
     title: {
       type: String,
       maxlength: [100, 'Title cannot exceed 100 characters']
-    }
+    },
+    skills: [String],
+    hourlyRate: Number,
+    isFreelancer: {
+      type: Boolean,
+      default: false
+    },
+    rating: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 5
+    },
+    reviewCount: {
+      type: Number,
+      default: 0
+    },
+    completedJobs: {
+      type: Number,
+      default: 0
+    },
+    responseTime: {
+      type: String,
+      default: '24 hours'
+    },
+    location: String,
+    languages: [String],
+    portfolio: [{
+      title: String,
+      description: String,
+      image: String,
+      technologies: [String],
+      link: String
+    }],
+    experience: [{
+      title: String,
+      company: String,
+      duration: String,
+      description: String
+    }],
+    education: [{
+      degree: String,
+      school: String,
+      year: String
+    }],
+    certifications: [{
+      name: String,
+      issuer: String,
+      year: String,
+      link: String
+    }]
   },
   subscription: {
     plan: {

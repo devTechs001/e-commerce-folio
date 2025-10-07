@@ -12,12 +12,17 @@ import authRoutes from './routes/auth.js'
 import userRoutes from './routes/users.js'
 import portfolioRoutes from './routes/portfolios.js'
 import templateRoutes from './routes/templates.js'
+import freelancingRoutes from './routes/freelancing.js'
+import billingRoutes from './routes/billing.js'
+import paymentRoutes from './routes/payments.js'
+import passwordRoutes from './routes/password.js'
 
 // Import middleware
 import errorHandler from './middleware/errorHandler.js'
 
 // Import socket handlers
 import { setupSocket } from './socket/index.js'
+import { socketService } from './socket/socketService.js'
 
 dotenv.config()
 
@@ -68,6 +73,10 @@ app.use('/api/auth', authRoutes)
 app.use('/api/users', userRoutes)
 app.use('/api/portfolios', portfolioRoutes)
 app.use('/api/templates', templateRoutes)
+app.use('/api/freelancing', freelancingRoutes)
+app.use('/api/billing', billingRoutes)
+app.use('/api/payments', paymentRoutes)
+app.use('/api/password', passwordRoutes)
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -82,6 +91,7 @@ app.get('/api/health', (req, res) => {
 app.use(errorHandler)
 
 // Socket.io setup
+socketService.initialize(io)
 setupSocket(io)
 
 // Database connection

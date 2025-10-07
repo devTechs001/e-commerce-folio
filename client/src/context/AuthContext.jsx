@@ -1,4 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
+import { socketService } from '../services/socket'
+import { updateService } from '../services/updateService'
+import { realTimeService } from '../services/realtime'
 
 export const AuthContext = createContext(null)
 
@@ -14,21 +17,60 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const raw = localStorage.getItem('auth:user')
+    const token = localStorage.getItem('token')
+    
     if (raw) {
-      try { setUser(JSON.parse(raw)) } catch {}
+      try { 
+        const userData = JSON.parse(raw)
+        setUser(userData)
+        
+        // Initialize services for authenticated user
+        if (token && userData && userData.email) {
+          realTimeService.init(token)
+          socketService.connect(token)
+          updateService.init(userData)
+        }
+      } catch {}
     }
     setLoading(false)
   }, [])
 
-  const login = async (data) => {
-    setUser(data)
-    localStorage.setItem('auth:user', JSON.stringify(data))
+  const login = async (userData) => {
+    try {
+      if (!userData || !userData.user) {
+        throw new Error('Invalid user data received')
+      }
+      
+      setUser(userData.user)
+      localStorage.setItem('auth:user', JSON.stringify(userData.user))
+      localStorage.setItem('token', userData.token)
+      
+      // Initialize real-time services with null checks
+      if (userData.token) {
+        realTimeService.init(userData.token)
+        socketService.connect(userData.token)
+      }
+      
+      // Initialize update service with null check
+      if (updateService && userData.user) {
+        updateService.init(userData.user)
+      }
+      
+      return userData
+    } catch (error) {
+      console.error('Login error:', error)
+      throw error
+    }
   }
 
   const logout = () => {
     setUser(null)
     localStorage.removeItem('auth:user')
     localStorage.removeItem('token')
+    
+    // Cleanup services
+    socketService.disconnect()
+    updateService.destroy()
   }
 
   const hasRole = (role) => {

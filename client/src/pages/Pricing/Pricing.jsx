@@ -135,8 +135,7 @@ const Pricing = () => {
 
         {/* Pricing Cards */}
         <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          // eslint-disable-next-line no-unused-vars
-          {plans.map((plan, index) => (
+          {plans.map((plan) => (
             <div
               key={plan.name}
               className={`relative bg-white rounded-2xl border-2 transition-all duration-300 hover:shadow-xl ${
@@ -186,13 +185,18 @@ const Pricing = () => {
                 </div>
 
                 {/* CTA Button */}
-                <Button
-                  variant={plan.popular ? 'primary' : 'outline'}
-                  className="w-full py-3 mb-8"
-                  href={plan.href}
-                >
-                  {plan.cta}
-                </Button>
+                <div className="mb-8">
+                  <Link
+                    to={plan.href}
+                    className={`inline-flex items-center justify-center w-full py-3 px-6 text-sm font-medium rounded-lg transition-all duration-200 ${
+                      plan.popular 
+                        ? 'bg-gradient-to-r from-primary-600 to-blue-600 text-white hover:from-primary-700 hover:to-blue-700 shadow-lg hover:shadow-xl' 
+                        : 'border border-primary-600 text-primary-600 hover:bg-primary-50'
+                    }`}
+                  >
+                    {plan.cta}
+                  </Link>
+                </div>
 
                 {/* Features */}
                 <ul className="space-y-4">
@@ -328,20 +332,18 @@ const Pricing = () => {
               Join thousands of professionals who trust E-Folio to showcase their work and advance their careers.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                variant="secondary"
-                className="bg-white text-primary-600 hover:bg-gray-50"
-                href={user ? '/dashboard' : '/register'}
+              <Link
+                to={user ? '/dashboard' : '/register'}
+                className="inline-flex items-center justify-center px-6 py-3 text-sm font-medium rounded-lg transition-all duration-200 bg-white text-primary-600 hover:bg-gray-50 shadow-lg hover:shadow-xl"
               >
                 {user ? 'Go to Dashboard' : 'Start Free Today'}
-              </Button>
-              <Button
-                variant="outline"
-                className="border-white text-white hover:bg-white/10"
-                href="/contact"
+              </Link>
+              <Link
+                to="/contact"
+                className="inline-flex items-center justify-center px-6 py-3 text-sm font-medium rounded-lg transition-all duration-200 border border-white text-white hover:bg-white/10"
               >
                 Contact Sales
-              </Button>
+              </Link>
             </div>
           </div>
         </div>

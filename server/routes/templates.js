@@ -5,46 +5,46 @@ import {
   getTemplate,
   createTemplate,
   updateTemplate,
-  rateTemplate
+  deleteTemplate,
+  duplicateTemplate,
+  toggleLike,
+  rateTemplate,
+  getMyTemplates,
+  getCategories
 } from '../controllers/templateController.js'
-import auth from '../middleware/auth.js'
+import { authenticateToken } from '../middleware/auth.js'
 import { handleValidationErrors } from '../middleware/validation.js'
 
 const router = express.Router()
 
-// @route   GET /api/templates
-// @desc    Get all templates
-// @access  Public
+// Public routes
 router.get('/', getTemplates)
-
-// @route   GET /api/templates/:templateId
-// @desc    Get specific template
-// @access  Public
-router.get('/:templateId', getTemplate)
+router.get('/categories', getCategories)
+router.get('/:id', getTemplate)
 
 // Protected routes
-router.use(auth)
+router.use(authenticateToken)
 
-// @route   POST /api/templates
-// @desc    Create a new template (admin/creator)
-// @access  Private
+// User templates
+router.get('/user/my-templates', getMyTemplates)
+
+// Template CRUD
 router.post('/', [
   body('name').notEmpty().trim().isLength({ min: 1, max: 100 }),
   body('description').notEmpty().trim().isLength({ min: 1, max: 500 }),
-  body('category').isIn(['minimal', 'creative', 'professional', 'modern', 'bold']),
-  body('price').isFloat({ min: 0 }),
-  body('previewImage').notEmpty()
+  body('category').isIn(['minimal', 'creative', 'professional', 'modern', 'bold', 'portfolio'])
 ], handleValidationErrors, createTemplate)
 
-// @route   PUT /api/templates/:templateId
-// @desc    Update template
-// @access  Private
-router.put('/:templateId', updateTemplate)
+router.put('/:id', updateTemplate)
+router.delete('/:id', deleteTemplate)
 
-// @route   POST /api/templates/:templateId/rate
-// @desc    Rate a template
-// @access  Private
-router.post('/:templateId/rate', [
+// Template actions
+router.post('/:id/duplicate', duplicateTemplate)
+router.post('/:id/like', [
+  body('action').isIn(['like', 'unlike'])
+], handleValidationErrors, toggleLike)
+
+router.post('/:id/rate', [
   body('rating').isInt({ min: 1, max: 5 })
 ], handleValidationErrors, rateTemplate)
 

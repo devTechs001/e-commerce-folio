@@ -1,6 +1,86 @@
 import Analytics from '../models/Analytics.js'
 import Portfolio from '../models/Portfolio.js'
 
+// Get recent activity for dashboard
+export const getRecentActivity = async (userId, limit = 10) => {
+  try {
+    const recentActivity = await Analytics.find({
+      userId,
+      date: { $gte: new Date(Date.now() - limit * 60 * 60 * 1000) }
+    }).sort({ date: -1 }).limit(limit)
+
+    return recentActivity.map(activity => ({
+      id: activity._id,
+      type: activity.type,
+      description: activity.description,
+      timestamp: activity.date,
+      metadata: activity.metadata
+    }))
+  } catch (error) {
+    console.error('Error getting recent activity:', error)
+    return []
+  }
+}
+
+// Get dashboard statistics
+export const getDashboardStats = async (userId) => {
+  try {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    const todayAnalytics = await Analytics.find({
+      userId,
+      date: today
+    })
+
+    const totalViews = await Analytics.countDocuments({
+      userId
+    })
+
+    const todayViews = todayAnalytics.reduce((sum, item) => sum + item.views, 0)
+    const totalVisitors = await Analytics.distinct('userId', {
+      userId
+    })
+    const conversionRate = totalVisitors > 0 ? (totalViews / totalVisitors) * 100 : 0
+    const revenue = await Analytics.aggregate([
+      {
+        $match: {
+          userId,
+          date: { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) }
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          revenue: { $sum: '$revenue' }
+        }
+      }
+    ])
+
+    return {
+      totalViews,
+      todayViews,
+      totalVisitors,
+      conversionRate,
+      revenue: revenue.length > 0 ? revenue[0].revenue : 0,
+      activeProjects: await Portfolio.countDocuments({
+        userId,
+        status: 'active'
+      })
+    }
+  } catch (error) {
+    console.error('Error getting dashboard stats:', error)
+    return {
+      totalViews: 0,
+      todayViews: 0,
+      totalVisitors: 0,
+      conversionRate: 0,
+      revenue: 0,
+      activeProjects: 0
+    }
+  }
+}
+
 export const generateAnalyticsReport = async (portfolioId, startDate, endDate) => {
   try {
     const analytics = await Analytics.find({

@@ -2,19 +2,35 @@ import api from './api'
 
 export const authService = {
   async login(credentials) {
-    const response = await api.post('/auth/login', credentials)
-    if (response.data.token) {
-      localStorage.setItem('token', response.data.token)
+    try {
+      const response = await api.post('/auth/login', credentials)
+      console.log('Login response:', response.data) // Check the structure
+      
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token)
+      }
+      
+      return response.data
+    } catch (error) {
+      console.error('Login service error:', error.response?.data)
+      throw error
     }
-    return response.data
   },
-
+  
   async register(userData) {
-    const response = await api.post('/auth/register', userData)
-    if (response.data.token) {
-      localStorage.setItem('token', response.data.token)
+    try {
+      const response = await api.post('/auth/register', userData)
+      console.log('Registration response:', response.data) // Check the structure
+      
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token)
+      }
+      
+      return response.data
+    } catch (error) {
+      console.error('Registration service error:', error.response?.data)
+      throw error
     }
-    return response.data
   },
 
   async logout() {

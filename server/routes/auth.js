@@ -45,7 +45,6 @@ router.post('/register', [
         lastName
       }
     })
-
     await user.save()
 
     // Generate token
@@ -56,6 +55,7 @@ router.post('/register', [
       user: {
         id: user._id,
         email: user.email,
+        role: user.role,
         profile: user.profile,
         subscription: user.subscription
       },
@@ -107,6 +107,7 @@ router.post('/login', [
       user: {
         id: user._id,
         email: user.email,
+        role: user.role,
         profile: user.profile,
         subscription: user.subscription,
         preferences: user.preferences
@@ -133,6 +134,7 @@ router.get('/me', auth, async (req, res) => {
       user: {
         id: user._id,
         email: user.email,
+        role: user.role,
         profile: user.profile,
         subscription: user.subscription,
         preferences: user.preferences,
@@ -188,6 +190,67 @@ router.put('/profile', auth, [
   } catch (error) {
     console.error('Profile update error:', error)
     res.status(500).json({ error: 'Server error during profile update' })
+  }
+})
+
+// @route   PUT /api/auth/change-password
+// @desc    Change user password
+// @access  Private
+router.put('/change-password', auth, [
+  body('currentPassword').notEmpty(),
+  body('newPassword').isLength({ min: 8 })
+], async (req, res) => {
+  try {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() })
+    }
+
+    const { currentPassword, newPassword } = req.body
+
+    const user = await User.findById(req.user.id).select('+password')
+    
+    // Verify current password
+    const isMatch = await user.comparePassword(currentPassword)
+    if (!isMatch) {
+      return res.status(400).json({ error: 'Current password is incorrect' })
+    }
+
+    // Update password
+    user.password = newPassword
+    await user.save()
+
+    res.json({ message: 'Password updated successfully' })
+  } catch (error) {
+    console.error('Password change error:', error)
+    res.status(500).json({ error: 'Server error during password change' })
+  }
+})
+
+// @route   PUT /api/auth/preferences
+// @desc    Update user preferences
+// @access  Private
+router.put('/preferences', auth, async (req, res) => {
+  try {
+    const { theme, notifications } = req.body
+
+    const updateData = {}
+    if (theme) updateData['preferences.theme'] = theme
+    if (notifications) updateData['preferences.notifications'] = notifications
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { $set: updateData },
+      { new: true, runValidators: true }
+    )
+
+    res.json({
+      message: 'Preferences updated successfully',
+      preferences: user.preferences
+    })
+  } catch (error) {
+    console.error('Preferences update error:', error)
+    res.status(500).json({ error: 'Server error during preferences update' })
   }
 })
 

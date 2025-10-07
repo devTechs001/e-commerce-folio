@@ -1,9 +1,28 @@
 import stripe from '../config/stripe.js'
 import User from '../models/User.js'
 
+const PRICE_IDS = {
+  pro: process.env.STRIPE_PRO_PRICE_ID,
+  enterprise: process.env.STRIPE_ENTERPRISE_PRICE_ID
+}
+
 export const createCheckoutSession = async (req, res) => {
   try {
-    const { priceId, successUrl, cancelUrl } = req.body
+    const { planId, billingDetails, successUrl, cancelUrl } = req.body
+    
+    // For demo purposes, return mock success
+    if (!process.env.STRIPE_SECRET_KEY) {
+      return res.json({ 
+        url: successUrl || `${process.env.CLIENT_URL || 'http://localhost:5173'}/dashboard/billing?success=true`,
+        message: 'Demo mode - payment simulation'
+      })
+    }
+
+    const priceId = PRICE_IDS[planId]
+
+    if (!priceId) {
+      return res.status(400).json({ error: 'Invalid plan selected' })
+    }
 
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
@@ -14,16 +33,17 @@ export const createCheckoutSession = async (req, res) => {
           quantity: 1,
         },
       ],
-      success_url: successUrl || `${process.env.CLIENT_URL}/dashboard?success=true`,
-      cancel_url: cancelUrl || `${process.env.CLIENT_URL}/pricing?canceled=true`,
+      success_url: successUrl || `${process.env.CLIENT_URL}/dashboard/billing?success=true`,
+      cancel_url: cancelUrl || `${process.env.CLIENT_URL}/dashboard/billing?canceled=true`,
       customer_email: req.user.email,
       client_reference_id: req.user.id,
       metadata: {
-        userId: req.user.id
+        userId: req.user.id,
+        planId
       }
     })
 
-    res.json({ sessionId: session.id })
+    res.json({ url: session.url })
   } catch (error) {
     console.error('Create checkout session error:', error)
     res.status(500).json({ error: 'Server error creating checkout session' })
@@ -33,7 +53,6 @@ export const createCheckoutSession = async (req, res) => {
 export const createPortalSession = async (req, res) => {
   try {
     const user = await User.findById(req.user.id)
-    
     if (!user.subscription.stripeCustomerId) {
       return res.status(400).json({ error: 'No subscription found' })
     }
