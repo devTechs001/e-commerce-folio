@@ -8,7 +8,7 @@ dotenv.config()
 const seedJobs = async () => {
   try {
     // Connect to MongoDB
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/efolio')
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ecommerce-folio')
     console.log('✅ Connected to MongoDB')
 
     // Get test users to use as job posters

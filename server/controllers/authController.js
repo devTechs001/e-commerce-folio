@@ -162,4 +162,6 @@ export const changePassword = async (req, res) => {
     console.error('Password change error:', error)
     res.status(500).json({ error: 'Server error during password change' })
   }
+
+  //admin full access to the system components,viewing and managing system users and clients
 }

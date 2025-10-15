@@ -4,6 +4,7 @@ import { Menu, X, User, LogOut, Bell, ChevronDown, Search, Palette, Zap, Users, 
 import { useAuth } from '../../../context/AuthContext.jsx'
 import { useNotification } from '../../../context/NotificationContext'
 import Button from '../../common/Button/Button'
+import NotificationPanel from '../../notifications/NotificationPanel'
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -557,6 +558,12 @@ const Header = () => {
           </div>
         )}
       </nav>
+      
+      {/* Notification Panel */}
+      <NotificationPanel 
+        isOpen={showNotifications}
+        onClose={() => setShowNotifications(false)}
+      />
     </header>
   )
 }

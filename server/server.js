@@ -15,6 +15,7 @@ import templateRoutes from './routes/templates.js'
 import freelancingRoutes from './routes/freelancing.js'
 import billingRoutes from './routes/billing.js'
 import paymentRoutes from './routes/payments.js'
+import unifiedPaymentRoutes from './routes/unifiedPayments.js'
 import passwordRoutes from './routes/password.js'
 import healthRoutes from './routes/health.js'
 
@@ -77,6 +78,7 @@ app.use('/api/templates', templateRoutes)
 app.use('/api/freelancing', freelancingRoutes)
 app.use('/api/billing', billingRoutes)
 app.use('/api/payments', paymentRoutes)
+app.use('/api/unified-payments', unifiedPaymentRoutes)
 app.use('/api/password', passwordRoutes)
 
 // Health check routes
@@ -92,7 +94,7 @@ setupSocket(io)
 // Database connection
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/efolio')
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ecommerce-folio')
     console.log('MongoDB connected successfully')
   } catch (error) {
     console.error('MongoDB connection error:', error)

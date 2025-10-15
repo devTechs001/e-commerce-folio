@@ -14,7 +14,7 @@ const setupComplete = async () => {
 
   try {
     // Connect to MongoDB
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/efolio')
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ecommerce-folio')
     console.log('✅ Connected to MongoDB')
 
     // Step 1: Seed Users

@@ -6,39 +6,40 @@ const paymentSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
-  stripePaymentIntentId: {
+  method: {
+    type: String,
+    enum: ['mpesa', 'stripe', 'paypal'],
+    required: true
+  },
+  transactionId: {
     type: String,
     required: true,
-    unique: true
+    index: true
   },
-  stripeCustomerId: String,
   amount: {
     type: Number,
     required: true
   },
   currency: {
     type: String,
-    default: 'usd'
+    default: 'USD',
+    uppercase: true
   },
   plan: {
     type: String,
-    required: true,
-    enum: ['pro', 'enterprise']
+    enum: ['free', 'professional', 'enterprise'],
+    default: 'free'
   },
   status: {
     type: String,
-    enum: ['pending', 'succeeded', 'failed', 'canceled'],
+    enum: ['pending', 'completed', 'failed', 'cancelled', 'refunded'],
     default: 'pending'
   },
   billingPeriod: {
     start: Date,
     end: Date
   },
-  paymentMethod: {
-    type: String,
-    enum: ['card', 'paypal', 'bank_transfer'],
-    default: 'card'
-  },
+  completedAt: Date,
   receiptUrl: String,
   error: {
     code: String,
@@ -51,7 +52,7 @@ const paymentSchema = new mongoose.Schema({
 
 // Indexes
 paymentSchema.index({ userId: 1 })
-paymentSchema.index({ stripePaymentIntentId: 1 }, { unique: true })
+paymentSchema.index({ transactionId: 1 }, { unique: true })
 paymentSchema.index({ status: 1 })
 paymentSchema.index({ createdAt: -1 })
 
@@ -62,14 +63,40 @@ paymentSchema.virtual('formattedAmount').get(function() {
 
 // Static method to find successful payments
 paymentSchema.statics.findSuccessfulPayments = function(userId) {
-  return this.find({ userId, status: 'succeeded' }).sort({ createdAt: -1 })
+  return this.find({ userId, status: 'completed' }).sort({ createdAt: -1 })
 }
 
 // Instance method to mark as successful
 paymentSchema.methods.markAsSuccess = function(receiptUrl) {
-  this.status = 'succeeded'
+  this.status = 'completed'
+  this.completedAt = new Date()
   this.receiptUrl = receiptUrl
   return this.save()
+}
+
+// Static method to get revenue by period
+paymentSchema.statics.getRevenue = async function(userId, startDate, endDate) {
+  const result = await this.aggregate([
+    {
+      $match: {
+        userId: mongoose.Types.ObjectId(userId),
+        status: 'completed',
+        completedAt: {
+          $gte: startDate,
+          $lte: endDate
+        }
+      }
+    },
+    {
+      $group: {
+        _id: null,
+        totalRevenue: { $sum: '$amount' },
+        count: { $sum: 1 }
+      }
+    }
+  ])
+  
+  return result[0] || { totalRevenue: 0, count: 0 }
 }
 
 export default mongoose.model('Payment', paymentSchema)

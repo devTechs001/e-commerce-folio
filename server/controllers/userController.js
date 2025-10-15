@@ -122,4 +122,5 @@ export const getUserStats = async (req, res) => {
     console.error('Get user stats error:', error)
     res.status(500).json({ error: 'Failed to fetch user stats' })
   }
+  //admin full access to the system components,viewing and managing system users and clients
 }

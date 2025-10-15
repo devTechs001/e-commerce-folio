@@ -143,7 +143,7 @@ const testUsers = [
 const seedUsers = async () => {
   try {
     // Connect to MongoDB
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/efolio')
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ecommerce-folio')
     console.log('✅ Connected to MongoDB')
 
     // Clear existing test users

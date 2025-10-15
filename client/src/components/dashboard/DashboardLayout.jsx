@@ -5,6 +5,7 @@ import TopNavbar from './TopNavbar'
 import { useAuth } from '../../context/AuthContext'
 import Onboarding from '../onboarding/Onboarding'
 import FloatingAI from '../common/FloatingAI'
+import AIAssistantChat from '../common/AIAssistant/AIAssistantChat'
 
 const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true)
@@ -68,6 +69,9 @@ const DashboardLayout = () => {
 
       {/* Floating AI Assistant */}
       <FloatingAI />
+      
+      {/* AI Assistant Chat */}
+      <AIAssistantChat />
     </div>
   )
 }

@@ -125,7 +125,7 @@ const SideNavbar = ({ onClose }) => {
   const secondaryNavigation = [
     {
       name: 'Notifications',
-      href: '/dashboard/notifications',
+      href: '/notifications',
       icon: Bell,
       roles: []
     },

@@ -4,6 +4,9 @@ import User from '../models/User.js'
 import { socketService } from './socketService.js'
 
 export const setupSocket = (io) => {
+  // Initialize socket service
+  socketService.initialize(io)
+  
   // Authentication middleware for socket
   io.use(async (socket, next) => {
     try {

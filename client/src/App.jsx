@@ -66,6 +66,11 @@ import TierBasedPortfolioEditor from './components/portfolio/TierBasedPortfolioE
 import TemplateGallery from './pages/CreateTemplate/TemplateGallery'
 import TemplatePreview from './pages/CreateTemplate/TemplatePreview'
 import TemplateCustomizer from './pages/CreateTemplate/TemplateCustomizer'
+import EnhancedAIBuilder from './pages/AIBuilder/EnhancedAIBuilder'
+import HelpCenter from './pages/Support/HelpCenter'
+import PortfolioCheckout from './pages/Checkout/PortfolioCheckout'
+import PaymentSuccess from './pages/Payment/PaymentSuccess'
+import PaymentFailed from './pages/Payment/PaymentFailed'
 
 // Context
 import { useAuth } from './context/AuthContext.jsx'
@@ -136,6 +141,7 @@ function AppContent() {
           <Route path="analytics-full" element={<AnalyticsPage />} />
           <Route path="revenue" element={<RevenueDashboard />} />
           <Route path="ai-generator" element={<AIPortfolioGenerator />} />
+          <Route path="ai-builder-enhanced" element={<EnhancedAIBuilder />} />
           <Route path="freelancing" element={<FreelancingHub />} />
           <Route path="messages" element={<PrivateMessages />} />
           <Route path="messages/:userId" element={<PrivateMessages />} />
@@ -191,14 +197,17 @@ function AppContent() {
           <Route path="owner" element={<RoleRoute roles={["owner"]}><Dashboard /></RoleRoute>} />
         </Route>
 
-        {/* Checkout Route */}
-        <Route path="/checkout" element={<CheckoutPage />} />
+        {/* Checkout Routes */}
+        <Route path="/checkout" element={<PortfolioCheckout />} />
+        <Route path="/payment/success" element={<PaymentSuccess />} />
+        <Route path="/payment/failed" element={<PaymentFailed />} />
 
         {/* Public Analytics Routes */}
         <Route path="/revenue" element={<RevenueDashboard />} />
 
         {/* Help & Support Routes */}
-        <Route path="/help" element={<HelpPage />} />
+        <Route path="/help" element={<HelpCenter />} />
+        <Route path="/help-old" element={<HelpPage />} />
 
         {/* Portfolio View Route (Public) */}
         <Route path="/portfolio/:username" element={<PortfolioView />} />
