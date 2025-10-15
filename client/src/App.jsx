@@ -49,6 +49,12 @@ import ProjectManager from './components/dashboard/workspace/ProjectManager'
 // Profile Component
 import Profile from './components/dashboard/Profile'
 
+// Dashboard Components
+import Themes from './components/dashboard/Themes'
+import Notification from './components/dashboard/Notification'
+import Users from './components/dashboard/Users'
+import Visitors from './components/dashboard/Visitors'
+
 // Standalone Pages
 import AnalyticsPage from './pages/Analytics/AnalyticsPage'
 import RevenueDashboard from './pages/Revenue/RevenueDashboard'
@@ -71,6 +77,16 @@ import HelpCenter from './pages/Support/HelpCenter'
 import PortfolioCheckout from './pages/Checkout/PortfolioCheckout'
 import PaymentSuccess from './pages/Payment/PaymentSuccess'
 import PaymentFailed from './pages/Payment/PaymentFailed'
+
+// Advanced Portfolio Features
+import MediaGallery from './components/portfolio/MediaGallery/MediaGallery'
+import HeaderBuilder from './components/portfolio/PortfolioFeatures/HeaderBuilder'
+import ButtonLinkBuilder from './components/portfolio/PortfolioFeatures/ButtonLinkBuilder'
+import CVBuilder from './components/portfolio/PortfolioFeatures/CVBuilder'
+import ContactFormBuilder from './components/portfolio/PortfolioFeatures/ContactFormBuilder'
+import HostingManager from './components/portfolio/HostingManager/HostingManager'
+import PayoutManager from './components/subscription/PayoutManager/PayoutManager'
+import EnhancedTemplateGallery from './components/templates/EnhancedTemplateGallery/EnhancedTemplateGallery'
 
 // Context
 import { useAuth } from './context/AuthContext.jsx'
@@ -118,6 +134,7 @@ function AppContent() {
           <Route path="pricing" element={<Pricing />} />
           <Route path="contact" element={<Contact />} />
           <Route path="templates" element={<TemplateMarketplace />} />
+          <Route path="templates/gallery" element={<EnhancedTemplateGallery />} />
           <Route path="login" element={<GuestRoute><Login /></GuestRoute>} />
           <Route path="register" element={<GuestRoute><Register /></GuestRoute>} />
         </Route>
@@ -181,11 +198,27 @@ function AppContent() {
           <Route path="workspace/editor" element={<CodeEditor />} />
           <Route path="workspace/files" element={<FileExplorer />} />
           
+          {/* Advanced Portfolio Features */}
+          <Route path="media-gallery" element={<MediaGallery />} />
+          <Route path="header-builder" element={<HeaderBuilder />} />
+          <Route path="button-builder" element={<ButtonLinkBuilder />} />
+          <Route path="cv-builder" element={<CVBuilder />} />
+          <Route path="contact-builder" element={<ContactFormBuilder />} />
+          <Route path="hosting" element={<HostingManager />} />
+          <Route path="payouts" element={<PayoutManager />} />
+          
+          {/* Dashboard Components */}
+          <Route path="themes" element={<Themes />} />
+          <Route path="notifications" element={<Notification />} />
+          <Route path="users" element={<RoleRoute roles={["admin"]}><Users /></RoleRoute>} />
+          <Route path="visitors" element={<Visitors />} />
+          
           {/* Other Routes */}
           <Route path="templates" element={<EnhancedMarketplace />} />
           <Route path="marketplace" element={<EnhancedMarketplace />} />
           <Route path="billing" element={<Billing />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="help" element={<HelpCenter />} />
           
           {/* Admin Routes */}
           <Route path="admin" element={<RoleRoute roles={["admin"]}><Dashboard /></RoleRoute>} />

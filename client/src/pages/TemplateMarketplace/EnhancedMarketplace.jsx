@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { Search, Filter, Star, Eye, Heart, Download, TrendingUp, Zap, Crown } from 'lucide-react'
+import { Search, Filter, Star, Eye, Heart, Download, TrendingUp, Zap, Crown, Edit2 } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { templateSamples, templateCategories } from '../../data/templateSamples'
 import { useAuth } from '../../context/AuthContext'
 import { motion } from 'framer-motion'
@@ -167,16 +168,26 @@ const EnhancedMarketplace = () => {
                     </div>
                     
                     {/* Overlay on Hover */}
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-3">
-                      <button className="bg-white text-gray-900 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors">
-                        <Eye className="w-4 h-4 inline mr-2" />
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-2">
+                      <Link 
+                        to={`/dashboard/templates/preview/${template.id}`}
+                        className="bg-white text-gray-900 px-3 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors text-sm"
+                      >
+                        <Eye className="w-4 h-4 inline mr-1" />
                         Preview
-                      </button>
+                      </Link>
+                      <Link
+                        to={`/dashboard/portfolio-editor?template=${template.id}&mode=edit`}
+                        className="bg-blue-600 text-white px-3 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors text-sm"
+                      >
+                        <Edit2 className="w-4 h-4 inline mr-1" />
+                        Edit
+                      </Link>
                       <button
                         onClick={() => handleUseTemplate(template)}
-                        className="bg-primary-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-primary-700 transition-colors"
+                        className="bg-primary-600 text-white px-3 py-2 rounded-lg font-medium hover:bg-primary-700 transition-colors text-sm"
                       >
-                        Use Template
+                        Use
                       </button>
                     </div>
 

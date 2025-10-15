@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Send, Paperclip, Image, Smile, Search, Phone, Video, MoreVertical } from 'lucide-react'
+import { Send, Paperclip, Image, Smile, Search, Phone, Video, MoreVertical, X, Download, Edit2, Trash2, Check, Eye } from 'lucide-react'
 import { useParams } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { socketService } from '../../services/socket'
+import uploadService from '../../services/upload'
 import toast from 'react-hot-toast'
 
 const PrivateMessages = () => {
@@ -14,7 +15,15 @@ const PrivateMessages = () => {
   const [newMessage, setNewMessage] = useState('')
   const [typing, setTyping] = useState(false)
   const [onlineUsers, setOnlineUsers] = useState([])
+  const [searchQuery, setSearchQuery] = useState('')
+  const [selectedFile, setSelectedFile] = useState(null)
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const [editingMessage, setEditingMessage] = useState(null)
+  const [previewImage, setPreviewImage] = useState(null)
+  const [messageReactions, setMessageReactions] = useState({})
   const messagesEndRef = useRef(null)
+  const fileInputRef = useRef(null)
+  const imageInputRef = useRef(null)
 
   useEffect(() => {
     fetchConversations()
@@ -137,8 +146,105 @@ const PrivateMessages = () => {
     }
   }
 
+  const handleFileSelect = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+
+    setSelectedFile(file)
+    toast.loading('Uploading file...')
+    
+    try {
+      let uploadedFile = file
+      
+      // Compress if image
+      if (file.type.startsWith('image/')) {
+        uploadedFile = await uploadService.compressImage(file, {
+          maxSizeMB: 1,
+          maxWidthOrHeight: 1920
+        })
+      }
+      
+      // Upload file
+      const result = await uploadService.uploadImage(uploadedFile)
+      
+      // Send message with attachment
+      const message = {
+        id: Date.now(),
+        senderId: user.id,
+        receiverId: activeChat.userId,
+        content: newMessage || 'Shared a file',
+        timestamp: new Date(),
+        isOwn: true,
+        attachment: {
+          url: result.url,
+          name: file.name,
+          type: file.type,
+          size: file.size
+        }
+      }
+      
+      setMessages(prev => [...prev, message])
+      socketService.emit('private_message', message)
+      setNewMessage('')
+      setSelectedFile(null)
+      toast.dismiss()
+      toast.success('File uploaded successfully!')
+    } catch (error) {
+      console.error('File upload error:', error)
+      toast.dismiss()
+      toast.error('Failed to upload file')
+    }
+  }
+
+  const handleImageSelect = async (e) => {
+    const file = e.target.files[0]
+    if (!file || !file.type.startsWith('image/')) return
+
+    try {
+      // Process and compress image
+      const processed = await uploadService.processImage(file, {
+        resize: { width: 1200 },
+        compress: true,
+        format: 'image/webp'
+      })
+      
+      const result = await uploadService.uploadImage(processed)
+      
+      const message = {
+        id: Date.now(),
+        senderId: user.id,
+        receiverId: activeChat.userId,
+        content: newMessage || '📷 Image',
+        timestamp: new Date(),
+        isOwn: true,
+        image: result.url
+      }
+      
+      setMessages(prev => [...prev, message])
+      socketService.emit('private_message', message)
+      setNewMessage('')
+      toast.success('Image sent!')
+    } catch (error) {
+      console.error('Image upload error:', error)
+      toast.error('Failed to send image')
+    }
+  }
+
   const sendMessage = () => {
     if (!newMessage.trim() || !activeChat) return
+
+    if (editingMessage) {
+      // Update existing message
+      setMessages(prev => prev.map(msg => 
+        msg.id === editingMessage.id 
+          ? { ...msg, content: newMessage, edited: true }
+          : msg
+      ))
+      socketService.emit('edit_message', { messageId: editingMessage.id, content: newMessage })
+      setEditingMessage(null)
+      setNewMessage('')
+      return
+    }
 
     const message = {
       id: Date.now(),
@@ -153,6 +259,29 @@ const PrivateMessages = () => {
     socketService.emit('private_message', message)
     setNewMessage('')
   }
+
+  const handleEditMessage = (message) => {
+    setEditingMessage(message)
+    setNewMessage(message.content)
+  }
+
+  const handleDeleteMessage = (messageId) => {
+    setMessages(prev => prev.filter(msg => msg.id !== messageId))
+    socketService.emit('delete_message', { messageId })
+    toast.success('Message deleted')
+  }
+
+  const handleReaction = (messageId, emoji) => {
+    setMessageReactions(prev => ({
+      ...prev,
+      [messageId]: [...(prev[messageId] || []), emoji]
+    }))
+    socketService.emit('message_reaction', { messageId, emoji, userId: user.id })
+  }
+
+  const filteredMessages = messages.filter(msg => 
+    !searchQuery || msg.content.toLowerCase().includes(searchQuery.toLowerCase())
+  )
 
   const handleTypingIndicator = () => {
     socketService.emit('typing', {
@@ -188,7 +317,9 @@ const PrivateMessages = () => {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
             <input
               type="text"
-              placeholder="Search conversations..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search messages..."
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
           </div>
@@ -270,17 +401,90 @@ const PrivateMessages = () => {
 
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50">
-              {messages.map((message) => (
-                <div key={message.id} className={`flex ${message.isOwn ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-md rounded-2xl px-4 py-2 ${
-                    message.isOwn
-                      ? 'bg-primary-600 text-white'
-                      : 'bg-white text-gray-900 border border-gray-200'
-                  }`}>
-                    <p className="text-sm">{message.content}</p>
-                    <p className={`text-xs mt-1 ${message.isOwn ? 'text-primary-100' : 'text-gray-500'}`}>
-                      {formatTime(message.timestamp)}
-                    </p>
+              {filteredMessages.map((message) => (
+                <div key={message.id} className={`flex ${message.isOwn ? 'justify-end' : 'justify-start'} group`}>
+                  <div className="relative max-w-md">
+                    <div className={`rounded-2xl px-4 py-2 ${
+                      message.isOwn
+                        ? 'bg-primary-600 text-white'
+                        : 'bg-white text-gray-900 border border-gray-200'
+                    }`}>
+                      <p className="text-sm">{message.content}</p>
+                      {message.edited && (
+                        <span className="text-xs opacity-70 italic"> (edited)</span>
+                      )}
+                      
+                      {/* Image Attachment */}
+                      {message.image && (
+                        <div className="mt-2">
+                          <img 
+                            src={message.image} 
+                            alt="Shared image" 
+                            className="rounded-lg max-w-full h-auto cursor-pointer"
+                            onClick={() => setPreviewImage(message.image)}
+                          />
+                        </div>
+                      )}
+                      
+                      {/* File Attachment */}
+                      {message.attachment && (
+                        <div className="mt-2 flex items-center space-x-2 p-2 bg-black bg-opacity-10 rounded-lg">
+                          <Paperclip className="w-4 h-4" />
+                          <span className="text-xs flex-1 truncate">{message.attachment.name}</span>
+                          <a href={message.attachment.url} download className="hover:opacity-70">
+                            <Download className="w-4 h-4" />
+                          </a>
+                        </div>
+                      )}
+                      
+                      <div className="flex items-center justify-between mt-1">
+                        <p className={`text-xs ${message.isOwn ? 'text-primary-100' : 'text-gray-500'}`}>
+                          {formatTime(message.timestamp)}
+                        </p>
+                        
+                        {/* Message Actions */}
+                        {message.isOwn && (
+                          <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button 
+                              onClick={() => handleEditMessage(message)}
+                              className="p-1 hover:bg-black hover:bg-opacity-10 rounded"
+                            >
+                              <Edit2 className="w-3 h-3" />
+                            </button>
+                            <button 
+                              onClick={() => handleDeleteMessage(message.id)}
+                              className="p-1 hover:bg-black hover:bg-opacity-10 rounded"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    
+                    {/* Reactions */}
+                    {messageReactions[message.id] && messageReactions[message.id].length > 0 && (
+                      <div className="flex items-center space-x-1 mt-1 text-xs">
+                        {messageReactions[message.id].map((emoji, idx) => (
+                          <span key={idx} className="bg-white border border-gray-200 rounded-full px-2 py-0.5">
+                            {emoji}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    
+                    {/* Quick Reactions */}
+                    <div className="absolute -bottom-6 left-0 flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white border border-gray-200 rounded-full px-2 py-1 shadow-sm">
+                      {['👍', '❤️', '😊', '🎉'].map(emoji => (
+                        <button
+                          key={emoji}
+                          onClick={() => handleReaction(message.id, emoji)}
+                          className="hover:scale-125 transition-transform"
+                        >
+                          {emoji}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -300,11 +504,52 @@ const PrivateMessages = () => {
 
             {/* Input */}
             <div className="bg-white border-t border-gray-200 p-4">
+              {editingMessage && (
+                <div className="mb-2 flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
+                  <div className="flex items-center space-x-2">
+                    <Edit2 className="w-4 h-4 text-blue-600" />
+                    <span className="text-sm text-blue-700">Editing message</span>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      setEditingMessage(null)
+                      setNewMessage('')
+                    }}
+                    className="text-blue-600 hover:text-blue-800"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+              
               <div className="flex items-center space-x-3">
-                <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                  accept="*/*"
+                />
+                <input
+                  ref={imageInputRef}
+                  type="file"
+                  onChange={handleImageSelect}
+                  className="hidden"
+                  accept="image/*"
+                />
+                
+                <button 
+                  onClick={() => fileInputRef.current?.click()}
+                  className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                  title="Attach file"
+                >
                   <Paperclip className="w-5 h-5" />
                 </button>
-                <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+                <button 
+                  onClick={() => imageInputRef.current?.click()}
+                  className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                  title="Send image"
+                >
                   <Image className="w-5 h-5" />
                 </button>
                 <input
@@ -314,8 +559,8 @@ const PrivateMessages = () => {
                     setNewMessage(e.target.value)
                     handleTypingIndicator()
                   }}
-                  onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                  placeholder="Type a message..."
+                  onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage()}
+                  placeholder={editingMessage ? "Edit message..." : "Type a message..."}
                   className="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
                 <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
@@ -326,7 +571,7 @@ const PrivateMessages = () => {
                   disabled={!newMessage.trim()}
                   className="bg-primary-600 text-white p-2 rounded-full hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                  <Send className="w-5 h-5" />
+                  {editingMessage ? <Check className="w-5 h-5" /> : <Send className="w-5 h-5" />}
                 </button>
               </div>
             </div>
@@ -343,6 +588,34 @@ const PrivateMessages = () => {
           </div>
         )}
       </div>
+      
+      {/* Image Preview Modal */}
+      {previewImage && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
+          onClick={() => setPreviewImage(null)}
+        >
+          <button 
+            className="absolute top-4 right-4 text-white hover:text-gray-300"
+            onClick={() => setPreviewImage(null)}
+          >
+            <X className="w-8 h-8" />
+          </button>
+          <img 
+            src={previewImage} 
+            alt="Preview" 
+            className="max-w-full max-h-full object-contain"
+          />
+          <a 
+            href={previewImage} 
+            download 
+            className="absolute bottom-4 right-4 bg-white text-gray-900 px-4 py-2 rounded-lg hover:bg-gray-100 flex items-center space-x-2"
+          >
+            <Download className="w-4 h-4" />
+            <span>Download</span>
+          </a>
+        </div>
+      )}
     </div>
   )
 }

@@ -22,7 +22,7 @@ const Footer = () => {
             <ul className="mt-4 space-y-2">
               <li><Link to="/templates" className="text-gray-300 hover:text-white transition-colors">Templates</Link></li>
               <li><Link to="/pricing" className="text-gray-300 hover:text-white transition-colors">Pricing</Link></li>
-              <li><Link to="/dashboard/ai-generator" className="text-gray-300 hover:text-white transition-colors">AI Generator</Link></li>
+              <li><Link to="/dashboard/ai-generator" className="text-gray-300 hover:text-white transition-colors">AI Portfolio Builder</Link></li>
               <li><Link to="/dashboard/analytics-full" className="text-gray-300 hover:text-white transition-colors">Analytics</Link></li>
             </ul>
           </div>

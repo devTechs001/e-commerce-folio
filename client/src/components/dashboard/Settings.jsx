@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { User, Mail, Lock, Bell, Shield, Palette, Globe, Save } from 'lucide-react'
+import { User, Mail, Lock, Bell, Shield, Palette, Globe, Save, Key, Link2, Database, Download, Trash2, Eye, EyeOff } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext.jsx'
 import Button from '../common/Button/Button'
 import Input from '../common/Form/Input'
@@ -40,7 +40,11 @@ const Settings = () => {
     { id: 'account', label: 'Account', icon: Mail },
     { id: 'security', label: 'Security', icon: Lock },
     { id: 'notifications', label: 'Notifications', icon: Bell },
-    { id: 'preferences', label: 'Preferences', icon: Palette }
+    { id: 'preferences', label: 'Preferences', icon: Palette },
+    { id: 'api', label: 'API & Keys', icon: Key },
+    { id: 'integrations', label: 'Integrations', icon: Link2 },
+    { id: 'privacy', label: 'Privacy', icon: Shield },
+    { id: 'data', label: 'Data', icon: Database }
   ]
 
   const handleProfileSubmit = async (e) => {
@@ -360,6 +364,26 @@ const Settings = () => {
                     ))}
                   </div>
                 </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Language</label>
+                  <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500">
+                    <option value="en">English</option>
+                    <option value="es">Spanish</option>
+                    <option value="fr">French</option>
+                    <option value="de">German</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Time Zone</label>
+                  <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500">
+                    <option value="UTC">UTC (GMT+0)</option>
+                    <option value="EST">Eastern Time (GMT-5)</option>
+                    <option value="PST">Pacific Time (GMT-8)</option>
+                    <option value="CET">Central European Time (GMT+1)</option>
+                  </select>
+                </div>
               </div>
             </div>
 
@@ -370,6 +394,194 @@ const Settings = () => {
             </div>
           </form>
         )}
+
+        {/* API & Keys Tab */}
+        {activeTab === 'api' && (
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">API Keys</h3>
+              <p className="text-sm text-gray-600 mb-4">Manage your API keys for external integrations</p>
+              
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                  <div className="flex-1">
+                    <p className="font-medium text-gray-900">Production API Key</p>
+                    <p className="text-sm text-gray-600 font-mono">pk_live_••••••••••••••••</p>
+                  </div>
+                  <div className="flex space-x-2">
+                    <Button variant="outline" size="sm" icon={Eye}>View</Button>
+                    <Button variant="outline" size="sm">Copy</Button>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                  <div className="flex-1">
+                    <p className="font-medium text-gray-900">Development API Key</p>
+                    <p className="text-sm text-gray-600 font-mono">pk_test_••••••••••••••••</p>
+                  </div>
+                  <div className="flex space-x-2">
+                    <Button variant="outline" size="sm" icon={Eye}>View</Button>
+                    <Button variant="outline" size="sm">Copy</Button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6">
+                <Button variant="primary" icon={Key}>Generate New Key</Button>
+              </div>
+            </div>
+
+            <div className="pt-6 border-t border-gray-200">
+              <h4 className="text-sm font-semibold text-gray-900 mb-4">Webhooks</h4>
+              <p className="text-sm text-gray-600 mb-4">Configure webhook endpoints for real-time notifications</p>
+              <Button variant="outline" icon={Link2}>Add Webhook</Button>
+            </div>
+          </div>
+        )}
+
+        {/* Integrations Tab */}
+        {activeTab === 'integrations' && (
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Connected Integrations</h3>
+              <p className="text-sm text-gray-600 mb-4">Manage your third-party integrations</p>
+              
+              <div className="space-y-4">
+                {[
+                  { name: 'Google Analytics', status: 'connected', icon: '📊' },
+                  { name: 'GitHub', status: 'connected', icon: '🐙' },
+                  { name: 'Stripe', status: 'disconnected', icon: '💳' },
+                  { name: 'Mailchimp', status: 'disconnected', icon: '📧' }
+                ].map((integration) => (
+                  <div key={integration.name} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <span className="text-2xl">{integration.icon}</span>
+                      <div>
+                        <p className="font-medium text-gray-900">{integration.name}</p>
+                        <p className={`text-sm ${
+                          integration.status === 'connected' ? 'text-green-600' : 'text-gray-500'
+                        }`}>
+                          {integration.status === 'connected' ? 'Connected' : 'Not connected'}
+                        </p>
+                      </div>
+                    </div>
+                    <Button 
+                      variant={integration.status === 'connected' ? 'outline' : 'primary'}
+                      size="sm"
+                    >
+                      {integration.status === 'connected' ? 'Disconnect' : 'Connect'}
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Privacy Tab */}
+        {activeTab === 'privacy' && (
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Privacy Settings</h3>
+              
+              <div className="space-y-4">
+                {[
+                  { key: 'profilePublic', label: 'Public Profile', description: 'Make your profile visible to everyone' },
+                  { key: 'showEmail', label: 'Show Email', description: 'Display your email on your public profile' },
+                  { key: 'showStats', label: 'Show Statistics', description: 'Display portfolio view statistics publicly' },
+                  { key: 'allowMessages', label: 'Allow Messages', description: 'Let users send you direct messages' }
+                ].map((item) => (
+                  <div key={item.key} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div>
+                      <p className="font-medium text-gray-900">{item.label}</p>
+                      <p className="text-sm text-gray-600">{item.description}</p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" className="sr-only peer" defaultChecked />
+                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="pt-6 border-t border-gray-200">
+              <h4 className="text-sm font-semibold text-gray-900 mb-4">Data Collection</h4>
+              <p className="text-sm text-gray-600 mb-4">Control how we collect and use your data</p>
+              <div className="space-y-3">
+                <label className="flex items-center space-x-3">
+                  <input type="checkbox" className="rounded border-gray-300" defaultChecked />
+                  <span className="text-sm text-gray-700">Analytics & Performance Data</span>
+                </label>
+                <label className="flex items-center space-x-3">
+                  <input type="checkbox" className="rounded border-gray-300" defaultChecked />
+                  <span className="text-sm text-gray-700">Marketing Communications</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Data Tab */}
+        {activeTab === 'data' && (
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Data Management</h3>
+              
+              <div className="space-y-4">
+                <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="flex items-start space-x-3">
+                    <Download className="h-5 w-5 text-blue-600 mt-0.5" />
+                    <div className="flex-1">
+                      <h4 className="font-medium text-blue-900 mb-1">Export Your Data</h4>
+                      <p className="text-sm text-blue-700 mb-3">Download all your data including portfolios, projects, and settings</p>
+                      <Button variant="outline" size="sm" icon={Download}>
+                        Request Data Export
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 bg-gray-50 rounded-lg">
+                  <h4 className="font-medium text-gray-900 mb-2">Storage Usage</h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Used</span>
+                      <span className="font-medium text-gray-900">2.4 GB of 10 GB</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div className="bg-primary-600 h-2 rounded-full" style={{ width: '24%' }}></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <div className="flex items-start space-x-3">
+                    <Trash2 className="h-5 w-5 text-red-600 mt-0.5" />
+                    <div className="flex-1">
+                      <h4 className="font-medium text-red-900 mb-1">Clear All Data</h4>
+                      <p className="text-sm text-red-700 mb-3">Permanently delete all your data including portfolios and projects</p>
+                      <Button variant="outline" size="sm" className="text-red-600 border-red-600 hover:bg-red-50">
+                        Clear Data
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Help Section */}
+      <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <div className="flex items-start space-x-3">
+          <Shield className="h-5 w-5 text-blue-600 mt-0.5" />
+          <div>
+            <h4 className="font-medium text-blue-900 mb-1">Need Help?</h4>
+            <p className="text-sm text-blue-700">Visit our <a href="/help" className="underline">Help Center</a> or contact support for assistance with your settings.</p>
+          </div>
+        </div>
       </div>
     </div>
   )

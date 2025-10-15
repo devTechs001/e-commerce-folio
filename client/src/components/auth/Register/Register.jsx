@@ -87,6 +87,7 @@ const Register = () => {
     setError('')
 
     try {
+      console.log('🚀 Starting registration...')
       const response = await authService.register({
         firstName: formData.firstName,
         lastName: formData.lastName,
@@ -94,16 +95,32 @@ const Register = () => {
         password: formData.password
       })
 
-      // API returns { message, user, token }
-      if (response.token && response.user) {
+      console.log('✅ Registration response:', response)
+
+      // Check if response has data property (nested structure)
+      const userData = response.data || response
+      const token = userData.token
+      const user = userData.user
+      
+      console.log('📦 Extracted data:', { hasToken: !!token, hasUser: !!user })
+
+      // API returns { data: { user, token } } or { user, token }
+      if (token && user) {
+        console.log('🔐 Logging in user...')
         // Auto-login after registration
-        await login(response) // Pass the full response object
-        navigate('/dashboard')
+        await login({ user, token }) // Pass formatted object
+        console.log('✅ Login successful, navigating to dashboard...')
+        
+        // Small delay to ensure state updates
+        setTimeout(() => {
+          navigate('/dashboard', { replace: true })
+        }, 100)
       } else {
-        setError(response.message || 'Registration failed')
+        console.error('❌ Invalid response format:', response)
+        setError(response.message || 'Registration failed - invalid response')
       }
     } catch (err) {
-      console.error('Registration error:', err)
+      console.error('❌ Registration error:', err)
       const errorMsg = err.response?.data?.error || err.response?.data?.message || err.message || 'An error occurred during registration'
       setError(errorMsg)
     } finally {

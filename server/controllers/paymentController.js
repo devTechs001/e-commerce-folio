@@ -52,6 +52,14 @@ export const createCheckoutSession = async (req, res) => {
 
 export const createPortalSession = async (req, res) => {
   try {
+    // Mock mode if Stripe not configured
+    if (!stripe) {
+      return res.json({ 
+        url: `${process.env.CLIENT_URL || 'http://localhost:5173'}/dashboard/billing?demo=true`,
+        message: 'Demo mode - billing portal simulation'
+      })
+    }
+
     const user = await User.findById(req.user.id)
     if (!user.subscription.stripeCustomerId) {
       return res.status(400).json({ error: 'No subscription found' })
@@ -70,6 +78,11 @@ export const createPortalSession = async (req, res) => {
 }
 
 export const handleWebhook = async (req, res) => {
+  // Skip webhook handling if Stripe not configured
+  if (!stripe) {
+    return res.json({ received: true, message: 'Demo mode - webhook ignored' })
+  }
+
   const sig = req.headers['stripe-signature']
   let event
 
@@ -107,6 +120,8 @@ export const handleWebhook = async (req, res) => {
 }
 
 const handleCheckoutSessionCompleted = async (session) => {
+  if (!stripe) return
+  
   const userId = session.client_reference_id
   const subscription = await stripe.subscriptions.retrieve(session.subscription)
 

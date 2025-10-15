@@ -56,9 +56,9 @@ const SideNavbar = ({ onClose }) => {
       roles: [],
       submenu: [
         { name: 'Overview', href: '/dashboard/analytics' },
+        { name: 'Visitors', href: '/dashboard/visitors' },
         { name: 'SEO Analysis', href: '/dashboard/analytics/seo' },
-        { name: 'Traffic Sources', href: '/dashboard/analytics/traffic' },
-        { name: 'Visitor Map', href: '/dashboard/analytics/visitors' }
+        { name: 'Traffic Sources', href: '/dashboard/analytics/traffic' }
       ]
     },
     {
@@ -103,8 +103,8 @@ const SideNavbar = ({ onClose }) => {
       roles: ['admin']
     },
     {
-      name: 'All Users',
-      href: '/dashboard/admin/users',
+      name: 'User Management',
+      href: '/dashboard/users',
       icon: Users,
       roles: ['admin']
     },
@@ -125,8 +125,14 @@ const SideNavbar = ({ onClose }) => {
   const secondaryNavigation = [
     {
       name: 'Notifications',
-      href: '/notifications',
+      href: '/dashboard/notifications',
       icon: Bell,
+      roles: []
+    },
+    {
+      name: 'Themes',
+      href: '/dashboard/themes',
+      icon: Palette,
       roles: []
     },
     {

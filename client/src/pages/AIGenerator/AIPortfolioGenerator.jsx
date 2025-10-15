@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
-import { Sparkles, Wand2, Download, Eye, Copy, RefreshCw } from 'lucide-react'
+import { Sparkles, Wand2, Download, Eye, Copy, RefreshCw, ArrowRight, Zap, TrendingUp } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { Link, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import axios from 'axios'
 
 const AIPortfolioGenerator = () => {
+  const navigate = useNavigate()
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
@@ -26,26 +28,65 @@ const AIPortfolioGenerator = () => {
   const generateContent = async () => {
     setLoading(true)
     try {
-      // Simulate AI generation (replace with actual API call)
+      // Simulate AI generation with more realistic content
       await new Promise(resolve => setTimeout(resolve, 2000))
       
+      const toneVariations = {
+        professional: {
+          bioPrefix: 'is a seasoned',
+          aboutStart: 'As an accomplished',
+          approach: 'My professional approach emphasizes',
+          closer: 'I am committed to excellence and continuous growth in'
+        },
+        casual: {
+          bioPrefix: 'is a friendly',
+          aboutStart: "Hey! I'm a passionate",
+          approach: 'I love to',
+          closer: "When I'm not coding, you'll find me learning about"
+        },
+        creative: {
+          bioPrefix: 'is an innovative',
+          aboutStart: 'Creativity meets functionality in my work as a',
+          approach: 'I blend artistic vision with',
+          closer: 'I believe in pushing boundaries and exploring new possibilities in'
+        },
+        technical: {
+          bioPrefix: 'is an expert',
+          aboutStart: 'With a strong technical foundation as a',
+          approach: 'My methodology focuses on',
+          closer: 'I specialize in implementing cutting-edge solutions in'
+        }
+      }
+      
+      const tone = toneVariations[formData.tone]
+      const skillsList = formData.skills.split(',').map(s => s.trim())
+      const projectsList = formData.projects.split(',').map(p => p.trim())
+      
       const content = {
-        bio: `${formData.name} is a ${formData.profession} with ${formData.experience} years of experience. Specializing in ${formData.skills}, they have successfully delivered numerous projects and continue to push the boundaries of innovation in their field.`,
+        bio: `${formData.name} ${tone.bioPrefix} ${formData.profession} with ${formData.experience}+ years of proven experience. Specializing in ${skillsList.slice(0, 3).join(', ')}, ${formData.name.split(' ')[0]} has successfully delivered ${Math.max(parseInt(formData.experience) * 5, 10)}+ projects across various industries. Known for innovative problem-solving and client-focused solutions, they continue to drive excellence in the ${formData.profession.toLowerCase()} field.`,
         
-        about: `As a passionate ${formData.profession}, I bring ${formData.experience} years of hands-on experience in creating exceptional digital solutions. My expertise spans across ${formData.skills}, allowing me to tackle complex challenges with creative and efficient approaches.\n\nThroughout my career, I've had the privilege of working on diverse projects including ${formData.projects}. Each project has strengthened my commitment to delivering high-quality work that exceeds client expectations.\n\nI believe in continuous learning and staying updated with the latest industry trends. My approach combines technical excellence with strong communication skills, ensuring successful project outcomes and satisfied clients.`,
+        about: `${tone.aboutStart} ${formData.profession}, I bring ${formData.experience} years of hands-on experience crafting exceptional digital solutions that make a real impact. My journey has been driven by a genuine passion for ${skillsList[0]} and ${skillsList[1] || 'technology'}.\n\n${tone.approach} clean code, scalable architecture, and user-centric design. Every project is an opportunity to create something meaningful. Throughout my career, I've had the privilege of working on exciting projects like ${projectsList.slice(0, 2).join(' and ')}, each teaching me invaluable lessons about collaboration, innovation, and technical excellence.\n\nWhat sets me apart is my ability to bridge the gap between complex technical requirements and practical business goals. I believe in staying ahead of the curve - constantly learning new technologies, frameworks, and best practices to deliver modern solutions that stand the test of time.\n\n${tone.closer} emerging technologies and industry trends. ${formData.tone === 'casual' ? "Let's build something amazing together!" : 'I look forward to collaborating on projects that challenge the status quo and create lasting value.'}`,
         
-        skills: formData.skills.split(',').map(skill => ({
-          name: skill.trim(),
-          level: Math.floor(Math.random() * 30) + 70,
-          category: 'Technical'
+        skills: skillsList.map((skill, index) => ({
+          name: skill,
+          level: Math.min(95, Math.max(70, 85 - (index * 5) + Math.floor(Math.random() * 10))),
+          category: index < 3 ? 'Technical' : index < 5 ? 'Tools' : 'Soft Skills'
         })),
         
-        projects: formData.projects.split(',').slice(0, 3).map((project, index) => ({
-          title: project.trim(),
-          description: `A comprehensive ${formData.profession.toLowerCase()} project that showcases advanced ${formData.skills.split(',')[0]} capabilities. This project demonstrates problem-solving skills and technical expertise.`,
-          technologies: formData.skills.split(',').slice(0, 3).map(s => s.trim()),
-          link: '#'
-        }))
+        projects: projectsList.slice(0, 3).map((project, index) => {
+          const descriptions = [
+            `A comprehensive ${formData.profession.toLowerCase()} solution that showcases advanced ${skillsList[index % skillsList.length]} capabilities. Successfully delivered to ${['10K+', '5K+', '15K+'][index]} active users with 99.9% uptime. This project demonstrates end-to-end development, deployment, and maintenance expertise.`,
+            `An innovative platform built with ${skillsList.slice(0, 2).join(' and ')} that revolutionized ${['user engagement', 'business operations', 'customer experience'][index]}. Implemented features including real-time updates, advanced analytics, and seamless integrations, resulting in a ${[45, 60, 35][index]}% improvement in key metrics.`,
+            `Enterprise-grade application leveraging ${skillsList[0]} to solve complex ${['data processing', 'workflow automation', 'communication'][index]} challenges. Collaborated with cross-functional teams to deliver a scalable solution that handles ${['1M+', '500K+', '2M+'][index]} transactions daily.`
+          ]
+          return {
+            title: project,
+            description: descriptions[index % 3],
+            technologies: skillsList.slice(0, Math.min(4, skillsList.length)),
+            impact: ['+45% efficiency', '+60% user engagement', '+35% revenue'][index],
+            link: '#'
+          }
+        })
       }
       
       setGeneratedContent(content)
@@ -326,14 +367,20 @@ const AIPortfolioGenerator = () => {
             {/* Projects */}
             <div className="bg-white rounded-2xl p-6 shadow-xl">
               <h3 className="text-xl font-bold text-gray-900 mb-4">Project Descriptions</h3>
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {generatedContent.projects.map((project, index) => (
-                  <div key={index} className="border-l-4 border-primary-600 pl-4">
-                    <h4 className="font-semibold text-gray-900 mb-2">{project.title}</h4>
-                    <p className="text-gray-700 text-sm mb-2">{project.description}</p>
+                  <div key={index} className="border-l-4 border-primary-600 pl-4 py-2">
+                    <h4 className="font-semibold text-gray-900 mb-2 text-lg">{project.title}</h4>
+                    <p className="text-gray-700 text-sm mb-3 leading-relaxed">{project.description}</p>
+                    {project.impact && (
+                      <div className="inline-flex items-center space-x-2 bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium mb-3">
+                        <TrendingUp className="w-3 h-3" />
+                        <span>Impact: {project.impact}</span>
+                      </div>
+                    )}
                     <div className="flex flex-wrap gap-2">
                       {project.technologies.map((tech, i) => (
-                        <span key={i} className="text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded">
+                        <span key={i} className="text-xs bg-primary-100 text-primary-700 px-3 py-1 rounded-full font-medium">
                           {tech}
                         </span>
                       ))}
@@ -356,10 +403,14 @@ const AIPortfolioGenerator = () => {
                 <Download className="w-5 h-5" />
                 <span>Download as PDF</span>
               </button>
-              <button className="flex items-center space-x-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-lg hover:from-purple-700 hover:to-blue-700 transition-colors">
-                <Eye className="w-5 h-5" />
+              <Link 
+                to="/dashboard/portfolio-editor?aiGenerated=true"
+                className="flex items-center space-x-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-lg hover:from-purple-700 hover:to-blue-700 transition-colors"
+              >
+                <Zap className="w-5 h-5" />
                 <span>Use in Portfolio</span>
-              </button>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
           </motion.div>
         )}

@@ -1,21 +1,47 @@
-import twilio from 'twilio'
-import africastalking from 'africastalking'
+// SMS Service - Works without twilio/africastalking packages
+// These packages are optional and will be loaded dynamically if available
 
 class SMSService {
   constructor() {
-    // Twilio configuration
-    this.twilioClient = process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN
-      ? twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN)
-      : null
+    this.twilioClient = null
     this.twilioPhone = process.env.TWILIO_PHONE_NUMBER
-
-    // Africa's Talking configuration
-    this.africasTalking = process.env.AFRICASTALKING_API_KEY
-      ? africastalking({
+    this.africasTalking = null
+    this.mockMode = true
+    
+    // Try to initialize Twilio if configured
+    this.initializeTwilio()
+    
+    // Try to initialize Africa's Talking if configured
+    this.initializeAfricasTalking()
+  }
+  
+  async initializeTwilio() {
+    try {
+      if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
+        const twilio = (await import('twilio')).default
+        this.twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN)
+        this.mockMode = false
+        console.log('✅ Twilio SMS service initialized')
+      }
+    } catch (error) {
+      console.warn('⚠️  Twilio package not installed. Install with: pnpm add twilio')
+    }
+  }
+  
+  async initializeAfricasTalking() {
+    try {
+      if (process.env.AFRICASTALKING_API_KEY) {
+        const africastalking = (await import('africastalking')).default
+        this.africasTalking = africastalking({
           apiKey: process.env.AFRICASTALKING_API_KEY,
           username: process.env.AFRICASTALKING_USERNAME || 'sandbox'
         })
-      : null
+        this.mockMode = false
+        console.log('✅ Africa\'s Talking SMS service initialized')
+      }
+    } catch (error) {
+      console.warn('⚠️  AfricasTalking package not installed. Install with: pnpm add africastalking')
+    }
   }
 
   /**

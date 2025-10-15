@@ -34,17 +34,34 @@ const Login = () => {
     setError('')
 
     try {
+      console.log('🚀 Starting login...')
       const response = await authService.login(formData)
       
-      // API returns { message, user, token }
-      if (response.token && response.user) {
-        await login(response) // Pass the full response object
-        navigate(from, { replace: true })
+      console.log('✅ Login response:', response)
+      
+      // Check if response has data property (nested structure)
+      const userData = response.data || response
+      const token = userData.token
+      const user = userData.user
+      
+      console.log('📦 Extracted data:', { hasToken: !!token, hasUser: !!user })
+      
+      // API returns { data: { user, token } } or { user, token }
+      if (token && user) {
+        console.log('🔐 Logging in user...')
+        await login({ user, token }) // Pass formatted object
+        console.log('✅ Login successful, navigating to:', from)
+        
+        // Small delay to ensure state updates
+        setTimeout(() => {
+          navigate(from, { replace: true })
+        }, 100)
       } else {
-        setError(response.message || 'Login failed')
+        console.error('❌ Invalid response format:', response)
+        setError(response.message || 'Login failed - invalid response')
       }
     } catch (err) {
-      console.error('Login error:', err)
+      console.error('❌ Login error:', err)
       const errorMsg = err.response?.data?.error || err.response?.data?.message || err.message || 'An error occurred during login'
       setError(errorMsg)
     } finally {

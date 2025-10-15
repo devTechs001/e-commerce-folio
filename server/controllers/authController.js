@@ -4,10 +4,27 @@ import { generateToken } from '../utils/helpers.js'
 export const register = async (req, res) => {
   try {
     const { email, password, firstName, lastName } = req.body
+    
+    console.log('📝 Registration attempt:', { email, firstName, lastName, hasPassword: !!password })
+
+    // Validate required fields
+    if (!email || !password || !firstName || !lastName) {
+      console.log('❌ Missing required fields:', { email: !!email, password: !!password, firstName: !!firstName, lastName: !!lastName })
+      return res.status(400).json({ 
+        error: 'All fields are required',
+        details: {
+          email: !email ? 'Email is required' : null,
+          password: !password ? 'Password is required' : null,
+          firstName: !firstName ? 'First name is required' : null,
+          lastName: !lastName ? 'Last name is required' : null
+        }
+      })
+    }
 
     // Check if user already exists
     const existingUser = await User.findOne({ email })
     if (existingUser) {
+      console.log('❌ User already exists:', email)
       return res.status(400).json({ 
         error: 'User with this email already exists' 
       })
@@ -24,6 +41,7 @@ export const register = async (req, res) => {
     })
 
     await user.save()
+    console.log('✅ User created successfully:', user._id)
 
     // Generate token
     const token = generateToken(user._id)
@@ -39,8 +57,31 @@ export const register = async (req, res) => {
       token
     })
   } catch (error) {
-    console.error('Registration error:', error)
-    res.status(500).json({ error: 'Server error during registration' })
+    console.error('❌ Registration error:', error)
+    
+    // Handle mongoose validation errors
+    if (error.name === 'ValidationError') {
+      const errors = {}
+      Object.keys(error.errors).forEach(key => {
+        errors[key] = error.errors[key].message
+      })
+      return res.status(400).json({ 
+        error: 'Validation failed',
+        details: errors
+      })
+    }
+    
+    // Handle duplicate key error
+    if (error.code === 11000) {
+      return res.status(400).json({ 
+        error: 'User with this email already exists' 
+      })
+    }
+    
+    res.status(500).json({ 
+      error: 'Server error during registration',
+      message: error.message 
+    })
   }
 }
 

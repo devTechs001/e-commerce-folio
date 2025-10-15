@@ -35,13 +35,168 @@ const TemplateMarketplace = () => {
     try {
       setLoading(true)
       const response = await templateService.getTemplates()
-      setTemplates(response.templates || [])
+      
+      // If no templates from API, use sample templates
+      if (!response.templates || response.templates.length === 0) {
+        setTemplates(getSampleTemplates())
+      } else {
+        setTemplates(response.templates)
+      }
     } catch (error) {
       console.error('Error loading templates:', error)
+      // Use sample templates on error
+      setTemplates(getSampleTemplates())
     } finally {
       setLoading(false)
     }
   }
+  
+  const getSampleTemplates = () => [
+    {
+      id: 1,
+      name: 'Modern Developer Portfolio',
+      description: 'Clean and modern portfolio template perfect for developers and programmers',
+      category: 'professional',
+      price: 0,
+      isPremium: false,
+      rating: 4.8,
+      downloads: 15420,
+      previewImage: 'https://images.unsplash.com/photo-1522542550221-31fd19575a2d?w=800',
+      features: ['Responsive Design', 'Dark Mode', 'Project Showcase', 'Skills Section', 'Contact Form']
+    },
+    {
+      id: 2,
+      name: 'Creative Portfolio Pro',
+      description: 'Bold and vibrant template for designers and creative professionals',
+      category: 'creative',
+      price: 29,
+      isPremium: true,
+      rating: 4.9,
+      downloads: 8930,
+      previewImage: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800',
+      features: ['Animated Sections', 'Gallery Grid', 'Video Support', 'Testimonials', 'Blog Integration']
+    },
+    {
+      id: 3,
+      name: 'Minimal Business',
+      description: 'Professional and minimal template for consultants and businesses',
+      category: 'minimal',
+      price: 0,
+      isPremium: false,
+      rating: 4.7,
+      downloads: 12650,
+      previewImage: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800',
+      features: ['Service Pages', 'Team Section', 'Pricing Tables', 'FAQ Section', 'Newsletter']
+    },
+    {
+      id: 4,
+      name: 'Photography Showcase',
+      description: 'Stunning template optimized for photographers and visual artists',
+      category: 'creative',
+      price: 39,
+      isPremium: true,
+      rating: 4.9,
+      downloads: 6780,
+      previewImage: 'https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=800',
+      features: ['Fullscreen Gallery', 'Lightbox', 'Image Slider', 'Client Proofing', 'Booking Form']
+    },
+    {
+      id: 5,
+      name: 'Bold Agency Landing',
+      description: 'High-converting landing page template for agencies and startups',
+      category: 'bold',
+      price: 49,
+      isPremium: true,
+      rating: 4.8,
+      downloads: 9430,
+      previewImage: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800',
+      features: ['Hero Video', 'Stats Counter', 'Case Studies', 'Team Grid', 'CTA Sections']
+    },
+    {
+      id: 6,
+      name: 'Developer Resume',
+      description: 'Clean resume-style template perfect for job applications',
+      category: 'minimal',
+      price: 0,
+      isPremium: false,
+      rating: 4.6,
+      downloads: 18920,
+      previewImage: 'https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=800',
+      features: ['Print-Friendly', 'PDF Export', 'Timeline View', 'Skills Chart', 'References']
+    },
+    {
+      id: 7,
+      name: 'Modern Tech Startup',
+      description: 'Sleek and professional template for tech startups and SaaS products',
+      category: 'modern',
+      price: 59,
+      isPremium: true,
+      rating: 4.9,
+      downloads: 5240,
+      previewImage: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=800',
+      features: ['Product Showcase', 'Pricing Plans', 'Feature Highlights', 'Customer Logos', 'Newsletter']
+    },
+    {
+      id: 8,
+      name: 'Freelancer Portfolio',
+      description: 'Versatile template for freelancers showcasing multiple skills',
+      category: 'professional',
+      price: 0,
+      isPremium: false,
+      rating: 4.7,
+      downloads: 11230,
+      previewImage: 'https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=800',
+      features: ['Service Listing', 'Portfolio Grid', 'Client Reviews', 'Contact Form', 'Social Links']
+    },
+    {
+      id: 9,
+      name: 'Creative Agency',
+      description: 'Dynamic template perfect for creative agencies and design studios',
+      category: 'creative',
+      price: 69,
+      isPremium: true,
+      rating: 4.8,
+      downloads: 7650,
+      previewImage: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+      features: ['Case Studies', 'Team Profiles', 'Service Offerings', 'Blog', 'Contact Options']
+    },
+    {
+      id: 10,
+      name: 'Personal Brand',
+      description: 'Simple and elegant template for personal branding and storytelling',
+      category: 'minimal',
+      price: 19,
+      isPremium: true,
+      rating: 4.6,
+      downloads: 8120,
+      previewImage: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800',
+      features: ['About Me', 'Timeline', 'Blog Posts', 'Social Integration', 'Contact Form']
+    },
+    {
+      id: 11,
+      name: 'Bold Creative',
+      description: 'Eye-catching template with bold typography and vibrant colors',
+      category: 'bold',
+      price: 0,
+      isPremium: false,
+      rating: 4.5,
+      downloads: 9870,
+      previewImage: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800',
+      features: ['Bold Typography', 'Color Gradients', 'Parallax Effects', 'Animation', 'Portfolio Grid']
+    },
+    {
+      id: 12,
+      name: 'Corporate Professional',
+      description: 'Enterprise-grade template for corporate professionals and executives',
+      category: 'professional',
+      price: 79,
+      isPremium: true,
+      rating: 4.9,
+      downloads: 4320,
+      previewImage: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800',
+      features: ['Executive Bio', 'Media Kit', 'Speaking Events', 'Publications', 'Contact Suite']
+    }
+  ]
 
   const filteredTemplates = templates.filter(template => {
     const matchesSearch = template.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -74,20 +229,24 @@ const TemplateMarketplace = () => {
         </div>
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
           <div className="flex space-x-2">
-            <Button
-              variant="primary"
-              size="small"
-              className="bg-white text-gray-900 hover:bg-gray-100"
-            >
-              <Eye className="h-4 w-4 mr-1" />
-              Preview
-            </Button>
-            <Button
-              variant="primary"
-              size="small"
-            >
-              Use Template
-            </Button>
+            <Link to={`/dashboard/templates/preview/${template.id}`}>
+              <Button
+                variant="primary"
+                size="small"
+                className="bg-white text-gray-900 hover:bg-gray-100"
+              >
+                <Eye className="h-4 w-4 mr-1" />
+                Preview
+              </Button>
+            </Link>
+            <Link to={`/dashboard/portfolio-editor?template=${template.id}`}>
+              <Button
+                variant="primary"
+                size="small"
+              >
+                Use Template
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
@@ -171,13 +330,17 @@ const TemplateMarketplace = () => {
             </div>
             
             <div className="flex space-x-2">
-              <Button variant="outline" size="small">
-                <Eye className="h-4 w-4 mr-1" />
-                Preview
-              </Button>
-              <Button variant="primary" size="small">
-                Use Template
-              </Button>
+              <Link to={`/dashboard/templates/preview/${template.id}`}>
+                <Button variant="outline" size="small">
+                  <Eye className="h-4 w-4 mr-1" />
+                  Preview
+                </Button>
+              </Link>
+              <Link to={`/dashboard/portfolio-editor?template=${template.id}`}>
+                <Button variant="primary" size="small">
+                  Use Template
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
