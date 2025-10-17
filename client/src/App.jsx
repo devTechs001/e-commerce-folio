@@ -13,7 +13,10 @@ import Pricing from './pages/Pricing/Pricing'
 import Contact from './pages/Contact/Contact'
 import Login from './components/auth/Login/Login'
 import Register from './components/auth/Register/Register'
+import ForgotPassword from './components/auth/ForgotPassword/ForgotPassword'
 import Dashboard from './components/dashboard/Dashboard'
+import TermsOfService from './pages/Legal/TermsOfService'
+import PrivacyPolicy from './pages/Legal/PrivacyPolicy'
 //import PortfolioBuilder from './pages/PortfolioBuilder/PortfolioBuilder'
 import TemplateMarketplace from './pages/TemplateMarketplace/TemplateMarketplace'
 import EnhancedMarketplace from './pages/TemplateMarketplace/EnhancedMarketplace'
@@ -137,6 +140,9 @@ function AppContent() {
           <Route path="templates/gallery" element={<EnhancedTemplateGallery />} />
           <Route path="login" element={<GuestRoute><Login /></GuestRoute>} />
           <Route path="register" element={<GuestRoute><Register /></GuestRoute>} />
+          <Route path="forgot-password" element={<GuestRoute><ForgotPassword /></GuestRoute>} />
+          <Route path="terms" element={<TermsOfService />} />
+          <Route path="privacy" element={<PrivacyPolicy />} />
         </Route>
 
         {/* Protected Dashboard Routes */}

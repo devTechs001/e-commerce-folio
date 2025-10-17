@@ -5,6 +5,7 @@ import {
   Clock, CheckCircle, Zap, Shield, Users, Settings
 } from 'lucide-react'
 import Button from '../../components/common/Button/Button'
+import LiveChatWidget from '../../components/common/LiveChatWidget'
 
 const HelpCenter = () => {
   const [searchQuery, setSearchQuery] = useState('')
@@ -311,6 +312,9 @@ const HelpCenter = () => {
           </div>
         </div>
       </div>
+      
+      {/* Live Chat Widget */}
+      <LiveChatWidget />
     </div>
   )
 }

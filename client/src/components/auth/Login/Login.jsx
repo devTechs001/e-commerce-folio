@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { Mail, Lock, Github, Twitter } from 'lucide-react'
+import { Mail, Lock, Github, Twitter, Chrome, ArrowRight } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { useAuth } from '../../../context/AuthContext.jsx'
 import Button from '../../common/Button/Button'
 import Input from '../../common/Form/Input'
@@ -79,32 +80,70 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-primary-50 to-blue-50 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Background decorative elements */}
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-primary-900 to-blue-900 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Animated Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary-200/20 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-200/20 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-primary-100/10 to-blue-100/10 rounded-full blur-3xl"></div>
+        <motion.div 
+          className="absolute -top-40 -right-40 w-80 h-80 bg-primary-500/20 rounded-full blur-3xl"
+          animate={{ 
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.5, 0.3]
+          }}
+          transition={{ duration: 8, repeat: Infinity }}
+        />
+        <motion.div 
+          className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl"
+          animate={{ 
+            scale: [1.2, 1, 1.2],
+            opacity: [0.5, 0.3, 0.5]
+          }}
+          transition={{ duration: 8, repeat: Infinity }}
+        />
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-primary-400/10 to-blue-400/10 rounded-full blur-3xl"></div>
       </div>
       
-      <div className="max-w-md w-full space-y-8 relative z-10">
+      <motion.div 
+        className="max-w-md w-full space-y-8 relative z-10"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
         {/* Header */}
         <div className="text-center">
-          <Link to="/" className="flex items-center justify-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-primary-600 to-blue-600 rounded-lg" />
-            <span className="text-2xl font-bold text-gray-900">E-Folio</span>
+          <Link to="/" className="flex items-center justify-center space-x-2 group">
+            <motion.div 
+              className="w-10 h-10 bg-gradient-to-r from-primary-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg"
+              whileHover={{ scale: 1.05, rotate: 5 }}
+              transition={{ type: "spring", stiffness: 400 }}
+            >
+              <span className="text-white font-bold text-xl">E</span>
+            </motion.div>
+            <span className="text-2xl font-bold text-white group-hover:text-primary-300 transition-colors">E-Folio</span>
           </Link>
-          <h2 className="mt-6 text-3xl font-bold text-gray-900">Sign in to your account</h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Or{' '}
-            <Link to="/register" className="font-medium text-primary-600 hover:text-primary-500">
-              create a new account
+          <motion.h2 
+            className="mt-6 text-3xl font-bold text-white"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            Welcome back!
+          </motion.h2>
+          <p className="mt-2 text-sm text-gray-300">
+            Don't have an account?{' '}
+            <Link to="/register" className="font-medium text-primary-400 hover:text-primary-300 transition-colors">
+              Sign up for free <ArrowRight className="inline h-4 w-4" />
             </Link>
           </p>
         </div>
 
         {/* Form */}
-        <form className="mt-8 space-y-6 bg-white/80 backdrop-blur-sm p-8 rounded-2xl border border-white/20 shadow-2xl hover:shadow-3xl transition-all duration-300" onSubmit={handleSubmit}>
+        <motion.form 
+          className="mt-8 space-y-6 bg-white/95 backdrop-blur-md p-8 rounded-2xl border border-white/30 shadow-2xl hover:shadow-3xl transition-all duration-300"
+          onSubmit={handleSubmit}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-4">
               <p className="text-sm text-red-600">{error}</p>
@@ -171,29 +210,53 @@ const Login = () => {
               </div>
             </div>
 
-            <div className="mt-6 grid grid-cols-2 gap-3">
-              <Button
+            <div className="mt-6 grid grid-cols-3 gap-3">
+              <motion.button
                 type="button"
-                variant="outline"
-                icon={Github}
                 onClick={() => handleOAuthLogin('github')}
-                className="w-full"
+                className="flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
-                GitHub
-              </Button>
-              <Button
+                <Github className="h-5 w-5" />
+              </motion.button>
+              <motion.button
                 type="button"
-                variant="outline"
-                icon={Twitter}
-                onClick={() => handleOAuthLogin('twitter')}
-                className="w-full"
+                onClick={() => handleOAuthLogin('google')}
+                className="flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
-                Twitter
-              </Button>
+                <Chrome className="h-5 w-5" />
+              </motion.button>
+              <motion.button
+                type="button"
+                onClick={() => handleOAuthLogin('twitter')}
+                className="flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Twitter className="h-5 w-5" />
+              </motion.button>
             </div>
           </div>
-        </form>
-      </div>
+        </motion.form>
+        
+        {/* Additional Links */}
+        <motion.div 
+          className="text-center space-y-2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+        >
+          <p className="text-sm text-gray-300">
+            By signing in, you agree to our{' '}
+            <Link to="/terms" className="text-primary-400 hover:text-primary-300">Terms of Service</Link>
+            {' '}and{' '}
+            <Link to="/privacy" className="text-primary-400 hover:text-primary-300">Privacy Policy</Link>
+          </p>
+        </motion.div>
+      </motion.div>
     </div>
   )
 }

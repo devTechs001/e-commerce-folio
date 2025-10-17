@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Plus, 
   Eye, 
@@ -11,7 +12,21 @@ import {
   ArrowDown,
   Activity,
   Brain,
-  Zap
+  Zap,
+  Star,
+  Rocket,
+  Target,
+  Award,
+  BarChart2,
+  Globe,
+  Heart,
+  MessageSquare,
+  Clock,
+  CheckCircle2,
+  AlertCircle,
+  Sparkles,
+  Layout,
+  Palette
 } from 'lucide-react'
 import { Line, Bar } from 'react-chartjs-2'
 import {
@@ -59,6 +74,14 @@ const Dashboard = () => {
   const [chartData, setChartData] = useState({ labels: [], datasets: [] })
   const [aiInsights, setAIInsights] = useState([])
   const [realTimeViews, setRealTimeViews] = useState(0)
+  const [quickStats, setQuickStats] = useState({
+    todayViews: 0,
+    avgEngagement: '0:00',
+    topPerformer: null,
+    completionRate: 0
+  })
+  const [achievements, setAchievements] = useState([])
+  const [recommendations, setRecommendations] = useState([])
 
   useEffect(() => {
     loadDashboardData()
@@ -146,6 +169,32 @@ const Dashboard = () => {
       setAIInsights(insights.slice(0, 3)) // Show top 3 insights
       
       setRealTimeViews(Math.floor(Math.random() * 15) + 5)
+      
+      // Load quick stats
+      setQuickStats({
+        todayViews: Math.floor(Math.random() * 50) + 20,
+        avgEngagement: '3:45',
+        topPerformer: portfolios.length > 0 ? portfolios[0].title : 'No portfolios yet',
+        completionRate: Math.floor(Math.random() * 30) + 70
+      })
+      
+      // Load achievements
+      const userAchievements = [
+        { id: 1, title: 'First Portfolio', icon: '🎯', unlocked: portfolios.length > 0, description: 'Created your first portfolio' },
+        { id: 2, title: 'Getting Popular', icon: '🌟', unlocked: totalViews > 100, description: 'Reached 100+ total views' },
+        { id: 3, title: 'Published Pro', icon: '🚀', unlocked: publishedCount >= 3, description: 'Published 3+ portfolios' },
+        { id: 4, title: 'Engagement Master', icon: '💬', unlocked: totalViews > 500, description: 'Achieved 500+ views' },
+        { id: 5, title: 'Rising Star', icon: '⭐', unlocked: totalViews > 1000, description: 'Hit 1000+ views milestone' }
+      ]
+      setAchievements(userAchievements)
+      
+      // Generate recommendations
+      const tips = [
+        { id: 1, title: 'Add More Projects', description: 'Showcase at least 5 projects to increase engagement', icon: Target, priority: 'high' },
+        { id: 2, title: 'Optimize SEO', description: 'Add meta descriptions to boost search visibility', icon: TrendingUp, priority: 'medium' },
+        { id: 3, title: 'Enable Analytics', description: 'Turn on advanced tracking for better insights', icon: BarChart2, priority: 'low' }
+      ]
+      setRecommendations(tips.slice(0, 2))
     } catch (error) {
       console.error('Error loading dashboard data:', error)
     }
@@ -167,28 +216,53 @@ const Dashboard = () => {
     }
   }
 
-  // eslint-disable-next-line no-unused-vars
-  const StatCard = ({ title, value, change, icon: Icon, color = 'blue' }) => (
-    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300">
+  const StatCard = ({ title, value, change, icon: Icon, color = 'blue', index = 0 }) => (
+    <motion.div 
+      className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 cursor-pointer group"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+      whileHover={{ y: -5 }}
+    >
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium text-gray-600">{title}</p>
-          <p className="text-2xl font-bold text-gray-900 mt-1">{value}</p>
+          <p className="text-sm font-medium text-gray-600 group-hover:text-gray-700">{title}</p>
+          <p className="text-3xl font-bold text-gray-900 mt-2">{value}</p>
           {change && (
-            <div className={`flex items-center mt-2 text-sm ${
-              change > 0 ? 'text-green-600' : 'text-red-600'
-            }`}>
-              {change > 0 ? <ArrowUp className="h-4 w-4 mr-1" /> : <ArrowDown className="h-4 w-4 mr-1" />}
+            <motion.div 
+              className={`flex items-center mt-3 text-sm font-medium ${
+                change > 0 ? 'text-green-600' : 'text-red-600'
+              }`}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.1 + 0.3 }}
+            >
+              {change > 0 ? <ArrowUp className="h-4 w-4 mr-1 animate-bounce" /> : <ArrowDown className="h-4 w-4 mr-1" />}
               {Math.abs(change)}% from last week
-            </div>
+            </motion.div>
           )}
         </div>
-        <div className={`p-3 rounded-lg bg-${color}-50`}>
-          <Icon className={`h-6 w-6 text-${color}-600`} />
-        </div>
+        <motion.div 
+          className={`p-4 rounded-xl bg-gradient-to-br ${getColorGradient(color)} group-hover:scale-110 transition-transform`}
+          whileHover={{ rotate: 5 }}
+        >
+          <Icon className="h-7 w-7 text-white" />
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   )
+  
+  const getColorGradient = (color) => {
+    const gradients = {
+      blue: 'from-blue-500 to-blue-600',
+      green: 'from-green-500 to-emerald-600',
+      purple: 'from-purple-500 to-violet-600',
+      orange: 'from-orange-500 to-amber-600',
+      red: 'from-red-500 to-rose-600',
+      pink: 'from-pink-500 to-rose-600'
+    }
+    return gradients[color] || gradients.blue
+  }
 
   const PortfolioCard = ({ portfolio }) => (
     <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 group">
@@ -285,6 +359,7 @@ const Dashboard = () => {
           change={12.5}
           icon={Eye}
           color="blue"
+          index={0}
         />
         <StatCard
           title="Portfolios"
@@ -292,6 +367,7 @@ const Dashboard = () => {
           change={8.2}
           icon={FileText}
           color="green"
+          index={1}
         />
         <StatCard
           title="Published"
@@ -299,6 +375,7 @@ const Dashboard = () => {
           change={15.3}
           icon={TrendingUp}
           color="purple"
+          index={2}
         />
         <StatCard
           title="Visitors"
@@ -306,7 +383,165 @@ const Dashboard = () => {
           change={-2.1}
           icon={Users}
           color="orange"
+          index={3}
         />
+      </div>
+      
+      {/* Quick Insights Row */}
+      <motion.div 
+        className="grid grid-cols-1 md:grid-cols-4 gap-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.6 }}
+      >
+        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-4 border border-blue-100">
+          <div className="flex items-center justify-between mb-2">
+            <Clock className="h-5 w-5 text-blue-600" />
+            <span className="text-xs font-medium text-blue-700 bg-blue-100 px-2 py-1 rounded-full">Today</span>
+          </div>
+          <p className="text-2xl font-bold text-blue-900">{quickStats.todayViews}</p>
+          <p className="text-sm text-blue-700">Views today</p>
+        </div>
+        
+        <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-100">
+          <div className="flex items-center justify-between mb-2">
+            <Activity className="h-5 w-5 text-green-600" />
+            <span className="text-xs font-medium text-green-700 bg-green-100 px-2 py-1 rounded-full">Avg</span>
+          </div>
+          <p className="text-2xl font-bold text-green-900">{quickStats.avgEngagement}</p>
+          <p className="text-sm text-green-700">Engagement time</p>
+        </div>
+        
+        <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-100">
+          <div className="flex items-center justify-between mb-2">
+            <Star className="h-5 w-5 text-purple-600" />
+            <span className="text-xs font-medium text-purple-700 bg-purple-100 px-2 py-1 rounded-full">Top</span>
+          </div>
+          <p className="text-sm font-bold text-purple-900 truncate">{quickStats.topPerformer}</p>
+          <p className="text-xs text-purple-700">Best performer</p>
+        </div>
+        
+        <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-4 border border-orange-100">
+          <div className="flex items-center justify-between mb-2">
+            <Target className="h-5 w-5 text-orange-600" />
+            <span className="text-xs font-medium text-orange-700 bg-orange-100 px-2 py-1 rounded-full">Rate</span>
+          </div>
+          <p className="text-2xl font-bold text-orange-900">{quickStats.completionRate}%</p>
+          <p className="text-sm text-orange-700">Profile completion</p>
+        </div>
+      </motion.div>
+      
+      {/* Achievements & Recommendations */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        {/* Achievements */}
+        <motion.div 
+          className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.7 }}
+        >
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <Award className="h-6 w-6 text-yellow-600" />
+              <h3 className="text-lg font-bold text-gray-900">Achievements</h3>
+            </div>
+            <Link to="/dashboard/achievements" className="text-primary-600 hover:text-primary-700 text-sm font-medium">
+              View All →
+            </Link>
+          </div>
+          <div className="grid grid-cols-5 gap-3">
+            {achievements.map((achievement) => (
+              <motion.div
+                key={achievement.id}
+                className={`relative group cursor-pointer ${achievement.unlocked ? '' : 'opacity-40'}`}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <div className={`text-4xl text-center p-3 rounded-xl ${
+                  achievement.unlocked 
+                    ? 'bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-yellow-200' 
+                    : 'bg-gray-50 border-2 border-gray-200'
+                }`}>
+                  {achievement.icon}
+                </div>
+                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-10">
+                  <div className="bg-gray-900 text-white text-xs rounded-lg py-2 px-3 whitespace-nowrap">
+                    <p className="font-semibold">{achievement.title}</p>
+                    <p className="text-gray-300">{achievement.description}</p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+          <div className="mt-4 flex items-center justify-between text-sm">
+            <span className="text-gray-600">
+              {achievements.filter(a => a.unlocked).length} of {achievements.length} unlocked
+            </span>
+            <div className="flex items-center gap-1">
+              {achievements.map((a, i) => (
+                <div 
+                  key={i}
+                  className={`h-1.5 w-8 rounded-full ${a.unlocked ? 'bg-yellow-400' : 'bg-gray-200'}`}
+                />
+              ))}
+            </div>
+          </div>
+        </motion.div>
+        
+        {/* Recommendations */}
+        <motion.div 
+          className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-6 shadow-sm border border-indigo-100"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.7 }}
+        >
+          <div className="flex items-center gap-2 mb-6">
+            <Sparkles className="h-6 w-6 text-indigo-600" />
+            <h3 className="text-lg font-bold text-gray-900">Smart Recommendations</h3>
+          </div>
+          <div className="space-y-3">
+            {recommendations.map((rec) => {
+              const Icon = rec.icon
+              return (
+                <motion.div 
+                  key={rec.id}
+                  className="bg-white rounded-lg p-4 shadow-sm border border-indigo-100 hover:shadow-md transition-all cursor-pointer group"
+                  whileHover={{ x: 5 }}
+                >
+                  <div className="flex items-start gap-3">
+                    <div className={`p-2 rounded-lg ${
+                      rec.priority === 'high' ? 'bg-red-50' :
+                      rec.priority === 'medium' ? 'bg-yellow-50' :
+                      'bg-green-50'
+                    }`}>
+                      <Icon className={`h-5 w-5 ${
+                        rec.priority === 'high' ? 'text-red-600' :
+                        rec.priority === 'medium' ? 'text-yellow-600' :
+                        'text-green-600'
+                      }`} />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-1">
+                        <h4 className="font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors">{rec.title}</h4>
+                        <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                          rec.priority === 'high' ? 'bg-red-100 text-red-700' :
+                          rec.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                          'bg-green-100 text-green-700'
+                        }`}>
+                          {rec.priority.toUpperCase()}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-600">{rec.description}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              )
+            })}
+          </div>
+          <button className="mt-4 w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition-colors font-medium text-sm">
+            Get More Tips
+          </button>
+        </motion.div>
       </div>
 
       {/* Analytics Quick Access */}

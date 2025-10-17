@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Search, Filter, Grid, List, Star, Eye, Download } from 'lucide-react'
+import { Search, Filter, Grid, List, Star, Eye, Download, Sparkles, TrendingUp } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { templateService } from '../../services/template'
 import Button from '../../components/common/Button/Button'
 
@@ -370,17 +371,26 @@ const TemplateMarketplace = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Template Marketplace
+        <motion.div 
+          className="text-center mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="inline-flex items-center gap-2 bg-primary-50 border border-primary-100 rounded-full px-4 py-2 mb-6">
+            <Sparkles className="h-4 w-4 text-primary-600" />
+            <span className="text-sm font-medium text-primary-700">{templates.length} professional templates available</span>
+          </div>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4">
+            <span className="text-primary-600">Template</span> Marketplace
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Choose from our collection of professionally designed templates to showcase your work in the best light.
           </p>
-        </div>
+        </motion.div>
 
         {/* Filters and Search */}
         <div className="bg-white rounded-2xl p-6 border border-gray-200 mb-8">

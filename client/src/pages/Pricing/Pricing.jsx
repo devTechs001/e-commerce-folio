@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Check, Star, Zap, Crown, HelpCircle } from 'lucide-react'
+import { Check, Star, Zap, Crown, HelpCircle, ArrowRight, Sparkles } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { useAuth } from '../../context/AuthContext.jsx'
 import Button from '../../components/common/Button/Button'
 
@@ -94,63 +95,89 @@ const Pricing = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-12">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-gray-50 to-white py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center max-w-4xl mx-auto mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Simple, Transparent Pricing
+        <motion.div 
+          className="text-center max-w-4xl mx-auto mb-16"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="inline-flex items-center gap-2 bg-primary-50 border border-primary-100 rounded-full px-4 py-2 mb-6">
+            <Sparkles className="h-4 w-4 text-primary-600" />
+            <span className="text-sm font-medium text-primary-700">Special offer: Get 20% off yearly plans</span>
+          </div>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4">
+            Simple, <span className="text-primary-600">Transparent</span> Pricing
           </h1>
           <p className="text-xl text-gray-600 mb-8">
             Choose the perfect plan for your needs. All plans include our core features with no hidden fees.
           </p>
 
           {/* Billing Toggle */}
-          <div className="inline-flex items-center bg-white rounded-lg p-1 border border-gray-200 shadow-sm">
+          <motion.div 
+            className="inline-flex items-center bg-white rounded-xl p-1.5 border border-gray-200 shadow-lg"
+            whileHover={{ scale: 1.02 }}
+          >
             <button
               onClick={() => setBillingPeriod('monthly')}
-              className={`px-6 py-2 text-sm font-medium rounded-md transition-colors ${
+              className={`px-6 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
                 billingPeriod === 'monthly'
-                  ? 'bg-primary-600 text-white shadow-sm'
-                  : 'text-gray-700 hover:text-gray-900'
+                  ? 'bg-gradient-to-r from-primary-600 to-blue-600 text-white shadow-md'
+                  : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50'
               }`}
             >
               Monthly
             </button>
             <button
               onClick={() => setBillingPeriod('yearly')}
-              className={`px-6 py-2 text-sm font-medium rounded-md transition-colors ${
+              className={`px-6 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 flex items-center gap-2 ${
                 billingPeriod === 'yearly'
-                  ? 'bg-primary-600 text-white shadow-sm'
-                  : 'text-gray-700 hover:text-gray-900'
+                  ? 'bg-gradient-to-r from-primary-600 to-blue-600 text-white shadow-md'
+                  : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50'
               }`}
             >
-              Yearly
-              <span className="ml-2 bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+              <span>Yearly</span>
+              <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full font-semibold">
                 Save {savings.professional}%
               </span>
             </button>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* Pricing Cards */}
         <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {plans.map((plan) => (
-            <div
+          {plans.map((plan, index) => (
+            <motion.div
               key={plan.name}
-              className={`relative bg-white rounded-2xl border-2 transition-all duration-300 hover:shadow-xl ${
+              className={`relative bg-white rounded-2xl border-2 transition-all duration-300 ${
                 plan.popular
-                  ? 'border-primary-500 shadow-lg scale-105'
-                  : 'border-gray-200 shadow-sm hover:border-gray-300'
+                  ? 'border-primary-500 shadow-2xl scale-105'
+                  : 'border-gray-200 shadow-lg hover:border-primary-300 hover:shadow-xl'
               }`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              whileHover={{ y: -8 }}
             >
               {/* Popular Badge */}
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <div className="bg-gradient-to-r from-primary-500 to-blue-500 text-white px-4 py-1 rounded-full text-sm font-medium flex items-center">
+                  <motion.div 
+                    className="bg-gradient-to-r from-primary-500 to-blue-500 text-white px-4 py-1.5 rounded-full text-sm font-medium flex items-center shadow-lg"
+                    animate={{ 
+                      scale: [1, 1.05, 1],
+                    }}
+                    transition={{ 
+                      duration: 2,
+                      repeat: Infinity,
+                      repeatType: "reverse"
+                    }}
+                  >
                     <Star className="h-4 w-4 mr-1 fill-current" />
                     Most Popular
-                  </div>
+                  </motion.div>
                 </div>
               )}
 
@@ -188,13 +215,14 @@ const Pricing = () => {
                 <div className="mb-8">
                   <Link
                     to={plan.href}
-                    className={`inline-flex items-center justify-center w-full py-3 px-6 text-sm font-medium rounded-lg transition-all duration-200 ${
+                    className={`group inline-flex items-center justify-center w-full py-3 px-6 text-sm font-medium rounded-lg transition-all duration-200 ${
                       plan.popular 
                         ? 'bg-gradient-to-r from-primary-600 to-blue-600 text-white hover:from-primary-700 hover:to-blue-700 shadow-lg hover:shadow-xl' 
-                        : 'border border-primary-600 text-primary-600 hover:bg-primary-50'
+                        : 'border-2 border-primary-600 text-primary-600 hover:bg-primary-50'
                     }`}
                   >
                     {plan.cta}
+                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </div>
 
@@ -208,14 +236,20 @@ const Pricing = () => {
                   ))}
                 </ul>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 
         {/* Comparison Table */}
-        <div className="max-w-4xl mx-auto mt-20">
+        <motion.div 
+          className="max-w-4xl mx-auto mt-20"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-            Compare Plans
+            Compare <span className="text-primary-600">All Features</span>
           </h2>
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
             <table className="w-full">
@@ -285,14 +319,20 @@ const Pricing = () => {
               </tbody>
             </table>
           </div>
-        </div>
+        </motion.div>
 
         {/* FAQ Section */}
-        <div className="max-w-4xl mx-auto mt-20">
+        <motion.div 
+          className="max-w-4xl mx-auto mt-20"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-            Frequently Asked Questions
+            Frequently Asked <span className="text-primary-600">Questions</span>
           </h2>
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 gap-6">
             {[
               {
                 question: "Can I change plans later?",
@@ -311,18 +351,27 @@ const Pricing = () => {
                 answer: "Yes, you can cancel your subscription at any time. No long-term contracts required."
               }
             ].map((faq, index) => (
-              <div key={index} className="bg-white p-6 rounded-lg border border-gray-200">
+              <motion.div 
+                key={index} 
+                className="bg-white p-6 rounded-xl border border-gray-200 hover:border-primary-300 hover:shadow-md transition-all duration-300"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
                 <div className="flex items-start">
-                  <HelpCircle className="h-5 w-5 text-primary-600 mr-3 mt-0.5 flex-shrink-0" />
-                  <div>
+                  <div className="p-2 bg-primary-50 rounded-lg">
+                    <HelpCircle className="h-5 w-5 text-primary-600 flex-shrink-0" />
+                  </div>
+                  <div className="ml-4">
                     <h3 className="font-semibold text-gray-900 mb-2">{faq.question}</h3>
-                    <p className="text-gray-600 text-sm">{faq.answer}</p>
+                    <p className="text-gray-600 text-sm leading-relaxed">{faq.answer}</p>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
 
         {/* Bottom CTA */}
         <div className="text-center mt-16">

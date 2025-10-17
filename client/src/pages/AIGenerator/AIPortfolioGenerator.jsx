@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
-import { Sparkles, Wand2, Download, Eye, Copy, RefreshCw, ArrowRight, Zap, TrendingUp } from 'lucide-react'
-import { motion } from 'framer-motion'
+import React, { useState, useRef } from 'react'
+import { Sparkles, Wand2, Download, Eye, Copy, RefreshCw, ArrowRight, Zap, TrendingUp, Upload, Image as ImageIcon, Palette, Scissors, Maximize2, Minimize2, Github, Linkedin, Mail, Phone, MapPin, Briefcase } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import axios from 'axios'
@@ -9,6 +9,10 @@ const AIPortfolioGenerator = () => {
   const navigate = useNavigate()
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
+  const fileInputRef = useRef(null)
+  const [uploadedImages, setUploadedImages] = useState([])
+  const [processingImage, setProcessingImage] = useState(false)
+  const [colorPalette, setColorPalette] = useState([])
   const [formData, setFormData] = useState({
     name: '',
     profession: '',
@@ -16,7 +20,14 @@ const AIPortfolioGenerator = () => {
     skills: '',
     projects: '',
     tone: 'professional',
-    length: 'medium'
+    length: 'medium',
+    email: '',
+    phone: '',
+    location: '',
+    github: '',
+    linkedin: '',
+    website: '',
+    theme: 'modern'
   })
   const [generatedContent, setGeneratedContent] = useState({
     bio: '',
@@ -24,6 +35,115 @@ const AIPortfolioGenerator = () => {
     skills: [],
     projects: []
   })
+
+  // Image upload and processing
+  const handleImageUpload = async (event) => {
+    const files = Array.from(event.target.files)
+    setProcessingImage(true)
+    
+    try {
+      const processedImages = await Promise.all(
+        files.map(async (file) => {
+          return new Promise((resolve) => {
+            const reader = new FileReader()
+            reader.onload = (e) => {
+              const img = new Image()
+              img.onload = () => {
+                // Create canvas for image processing
+                const canvas = document.createElement('canvas')
+                const ctx = canvas.getContext('2d')
+                
+                // Resize for optimization
+                const maxSize = 1200
+                let width = img.width
+                let height = img.height
+                
+                if (width > height && width > maxSize) {
+                  height = (height * maxSize) / width
+                  width = maxSize
+                } else if (height > maxSize) {
+                  width = (width * maxSize) / height
+                  height = maxSize
+                }
+                
+                canvas.width = width
+                canvas.height = height
+                ctx.drawImage(img, 0, 0, width, height)
+                
+                // Extract dominant colors
+                const imageData = ctx.getImageData(0, 0, width, height)
+                const colors = extractColors(imageData)
+                
+                resolve({
+                  id: Date.now() + Math.random(),
+                  url: canvas.toDataURL('image/jpeg', 0.9),
+                  original: e.target.result,
+                  name: file.name,
+                  colors: colors,
+                  size: file.size,
+                  dimensions: { width, height }
+                })
+              }
+              img.src = e.target.result
+            }
+            reader.readAsDataURL(file)
+          })
+        })
+      )
+      
+      setUploadedImages(prev => [...prev, ...processedImages])
+      
+      // Extract color palette from first image
+      if (processedImages.length > 0 && processedImages[0].colors) {
+        setColorPalette(processedImages[0].colors.slice(0, 5))
+      }
+      
+      toast.success(`${processedImages.length} image(s) processed successfully!`)
+    } catch (error) {
+      console.error('Image processing error:', error)
+      toast.error('Failed to process images')
+    } finally {
+      setProcessingImage(false)
+    }
+  }
+  
+  // Extract dominant colors from image
+  const extractColors = (imageData) => {
+    const pixels = imageData.data
+    const colorMap = {}
+    
+    // Sample every 10th pixel for performance
+    for (let i = 0; i < pixels.length; i += 40) {
+      const r = pixels[i]
+      const g = pixels[i + 1]
+      const b = pixels[i + 2]
+      const rgb = `${r},${g},${b}`
+      colorMap[rgb] = (colorMap[rgb] || 0) + 1
+    }
+    
+    // Sort by frequency and get top colors
+    const sortedColors = Object.entries(colorMap)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 8)
+      .map(([rgb]) => {
+        const [r, g, b] = rgb.split(',').map(Number)
+        return `rgb(${r}, ${g}, ${b})`
+      })
+    
+    return sortedColors
+  }
+  
+  // Remove image
+  const removeImage = (id) => {
+    setUploadedImages(prev => prev.filter(img => img.id !== id))
+    toast.success('Image removed')
+  }
+  
+  // Apply AI-powered image enhancements
+  const enhanceImage = (imageId) => {
+    toast.success('AI enhancement applied! (Demo)')
+    // In production, this would call an AI service for image enhancement
+  }
 
   const generateContent = async () => {
     setLoading(true)
@@ -98,6 +218,15 @@ const AIPortfolioGenerator = () => {
       setLoading(false)
     }
   }
+  
+  const themes = [
+    { id: 'modern', name: 'Modern', color: 'from-blue-500 to-purple-500', preview: '🎨' },
+    { id: 'minimal', name: 'Minimal', color: 'from-gray-700 to-gray-900', preview: '⚪' },
+    { id: 'creative', name: 'Creative', color: 'from-pink-500 to-orange-500', preview: '🌈' },
+    { id: 'professional', name: 'Professional', color: 'from-indigo-600 to-blue-600', preview: '💼' },
+    { id: 'dark', name: 'Dark Mode', color: 'from-slate-900 to-gray-800', preview: '🌙' },
+    { id: 'vibrant', name: 'Vibrant', color: 'from-green-400 to-cyan-500', preview: '✨' }
+  ]
 
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text)

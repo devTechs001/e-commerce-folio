@@ -19,7 +19,15 @@ import {
   Zap,
   BarChart3,
   Users,
-  Sparkles
+  Sparkles,
+  Briefcase,
+  GraduationCap,
+  Folder,
+  Mail,
+  Quote,
+  Package,
+  FileText,
+  Clock
 } from 'lucide-react'
 import { subscriptionService } from '../../services/subscription'
 import { useAuth } from '../../context/AuthContext'
