@@ -15,7 +15,8 @@ import {
   HelpCircle,
   Shield,
   Package,
-  Briefcase
+  Briefcase,
+  DollarSign
 } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext.jsx'
 
@@ -85,6 +86,12 @@ const SideNavbar = ({ onClose }) => {
         { name: 'Team Chat', href: '/dashboard/team/chat' },
         { name: 'Team Members', href: '/dashboard/team' }
       ]
+    },
+    {
+      name: 'Revenue',
+      href: '/dashboard/revenue',
+      icon: DollarSign,
+      roles: []
     },
     {
       name: 'Billing',
