@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Wand2, Copy, RefreshCw, Download } from 'lucide-react'
 import Button from '../../common/Button/Button'
-import Textarea from '../../common/Form/Textarea'
+import Textarea from "../../common/Form/TextArea";
 
 const ContentGenerator = () => {
   const [prompt, setPrompt] = useState('')

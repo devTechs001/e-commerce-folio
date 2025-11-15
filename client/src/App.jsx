@@ -20,7 +20,7 @@ import PrivacyPolicy from './pages/Legal/PrivacyPolicy'
 //import PortfolioBuilder from './pages/PortfolioBuilder/PortfolioBuilder'
 import TemplateMarketplace from './pages/TemplateMarketplace/TemplateMarketplace'
 import EnhancedMarketplace from './pages/TemplateMarketplace/EnhancedMarketplace'
-import PortfolioView from './pages/PortfolioView/PortfolioView'
+import PortfolioView from './pages/PortFolioView/PortfolioView'
 import Settings from './components/dashboard/Settings'
 import Billing from './components/dashboard/billing/Billing'
 
